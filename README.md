@@ -1,13 +1,13 @@
 # Overview
 
-This project demonstrates a Salesforce Canvas application. This component is the SID Selector on the Agreement Page. A SF Canvas app is a wrapper around a third party application that is independently hosted, and loaded into SF through it's url (including localhost!). This specific component utilizes an Aura component to house the force:canvas component. The Aura component is passing in the pages record Id for use in the Canvas app.
+This project demonstrates a Salesforce Canvas application. This component is an open grid that is not page specific. A SF Canvas app is a wrapper around a third party application that is independently hosted, and loaded into SF through it's url (including localhost!). This specific component utilizes an Aura component to house the force:canvas component. The Aura component is passing in the pages record Id for use in the Canvas app.
 
 This repo has three main parts:  
 1: nginx server in the server folder  
 2: react client application in client folder  
 3: salesforce Aura component in the force-app folder
 
-This project does not have proper error handling or full unit testing, and is currently for example only. The FLEX SID isn't functional yet. If someone wants to take a stab at adding it based on this projects architecture, go for it!
+This project does not have proper error handling or full unit testing, and is currently for example only. This project uses local storage to save component specific schema data.
 
 ## Get it running
 
@@ -39,7 +39,9 @@ This project does not have proper error handling or full unit testing, and is cu
 
 **From the terminal**  
 1: from the project root, `npm i`, then start the nginx server `npm run start`  
-2: from a new terminal, `cd client` and run `npm i`, then start the react app `npm run start`
+2: from a new terminal, `cd client` and run `npm i`, then start the react app `npm run watch`
+
+note: `npm run watch` creates a production build and deploys it to the build dir. The server loads the build static files when the endpoint is hit. If you need better debugging details, stop the watch, and run `npm run start`.
 
 #### Add Canvas App to SF Page
 
@@ -68,12 +70,4 @@ The client is a react application using functional components. The app utilizes 
 
 The signed request is illustrated in the `sampleCanvasReq.json` file in the Client dir. Contains user info, the OAuth token, relative links for the Salesforce API, and the record Id under `parameters` that we passed in through the Aura app.
 
-Once the app populates the record Id, it performs a composite API request for all of the page data:  
-1: Current agreement on the page  
-2: Agreement SIDs for the agreement  
-3: Opportunity SIDs on the agreements Opportunity  
-With this info, the app builds the default UI
-
-The UI is responsive and can be placed in any location on the agreement page.
-
-The app has examples of Composite GET requests, Composite POST, DELETE and PATCH requests, SOQL requests, and hitting APEX classes all using the Salesforce API.
+The app has examples of Apex requests, entity definition requests, and graphql requests
