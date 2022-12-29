@@ -1,0 +1,10 @@
+.toolsContainer {
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+}
+
+.toolsContainer > div {
+	margin: 0 5px;
+}
