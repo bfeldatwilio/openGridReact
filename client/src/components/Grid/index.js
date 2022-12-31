@@ -19,6 +19,7 @@ export default function Grid() {
 	const [loadedFields, setLoadedFields] = useState([]);
 	// const [openGridJSONObject, setOpenGridJSONObject] = useState();
 	const [activeFields, setActiveFields] = useState([]);
+	const [activeFilters, setActiveFilters] = useState([]);
 	const [activeObject, setActiveObject] = useState();
 	const [gridData, setGridData] = useState();
 
@@ -32,20 +33,18 @@ export default function Grid() {
 		}
 	}, [sr]);
 
+	//TODO want individual updates to trigger a fresh grid, but not when loaded...
 	useEffect(() => {
 		if (activeFields.length > 0) {
-			fetchGridData(activeObject, activeFields);
-			saveGridObjToStorage(activeObject, activeFields);
+			fetchGridData(activeObject, activeFields, activeFilters);
+			saveGridObjToStorage(activeObject, activeFields, activeFilters);
 		}
-	}, [activeFields]);
+	}, [activeFields, activeFilters]);
 
-	const fieldSavedHandler = async (gridFields) => {
-		setActiveFields(gridFields);
-	};
-
-	const fetchGridData = async (object, fields) => {
-		let graphStr = graphStringFromObjects(object, fields);
+	const fetchGridData = async (object, fields, filters) => {
+		let graphStr = graphStringFromObjects(object, fields, filters);
 		let gridData = await graphqlQuery(sr, graphStr, object.QualifiedApiName);
+		console.log(gridData);
 		setGridData(gridData);
 	};
 
@@ -56,26 +55,40 @@ export default function Grid() {
 		let gridObject = localStorage.getItem(storageLocation);
 		if (gridObject) {
 			let gridObjectJSON = JSON.parse(gridObject);
-			let { object, fields } = gridObjectJSON;
+			let { object, fields, filters } = gridObjectJSON;
 			setActiveObject(object);
 			setLoadedFields(fields);
 			setActiveFields(fields);
+			setActiveFilters(filters);
 		}
 	};
 
-	const saveGridObjToStorage = (obj, fields) => {
+	const saveGridObjToStorage = (obj, fields, filters) => {
 		let page = sr.context.environment.locationUrl;
 		let storageLocation = PREFIX + page;
 		let openGridJSONObj = {
 			object: obj,
 			fields: fields,
+			filters: filters,
 		};
 		let openGridStorageStr = JSON.stringify(openGridJSONObj);
 		localStorage.setItem(storageLocation, openGridStorageStr);
 	};
 
-	const graphStringFromObjects = (object, fields) => {
+	const graphStringFromObjects = (object, fields, filters) => {
+		console.log("filters!!!!!!!!!!!!!!");
+		console.log(filters);
 		let fieldQueryStr = "";
+		let filterQueryStr = "(first:200";
+		if (filters.length > 0) {
+			filterQueryStr += `, where: { and: [ `;
+			filters.forEach((filter) => {
+				filterQueryStr += `{ ${filter.fieldName}: {${filter.operatorValue}: "${filter.value}" }}, `;
+			});
+			filterQueryStr += `] })`;
+		} else {
+			filterQueryStr = filterQueryStr += ")";
+		}
 		fields.forEach((field) => {
 			if (field.type === "id") {
 				fieldQueryStr += `Id `;
@@ -86,7 +99,7 @@ export default function Grid() {
 		let graph = `query openGrid {
 			uiapi {
 			  query {
-				${object.QualifiedApiName} {
+				${object.QualifiedApiName}${filterQueryStr} {
 				  edges {
 					node {
 					  ${fieldQueryStr}
@@ -96,16 +109,13 @@ export default function Grid() {
 			  }
 			}
 		  }`;
+		console.log(graph);
 		return graph;
 	};
 
 	const graphqlQuery = async (sr, graph, apiName) => {
 		let res = await graphQLPOST(sr, graph);
 		return res.data.uiapi.query[apiName];
-	};
-
-	const objectSavedHandler = (object) => {
-		setActiveObject(object);
 	};
 
 	const populateSignedRequest = () => {
@@ -149,10 +159,12 @@ export default function Grid() {
 			<div class="slds-card__body slds-card__body_inner">
 				{sr && (
 					<Tools
-						onFieldsSaved={fieldSavedHandler}
-						onObjectSaved={objectSavedHandler}
+						onFieldsSaved={setActiveFields}
+						onObjectSaved={setActiveObject}
 						activeObject={activeObject}
 						loadedFields={loadedFields}
+						filters={activeFilters}
+						onFilterChanged={(filters) => setActiveFilters(filters)}
 						sr={sr}
 					/>
 				)}

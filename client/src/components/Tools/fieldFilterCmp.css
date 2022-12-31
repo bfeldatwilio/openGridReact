@@ -1,0 +1,17 @@
+.filterContainer {
+	position: absolute;
+	right: 0;
+	z-index: 5001;
+	background: white;
+	overflow-y: visible;
+}
+
+.filterPopoverContainer {
+	position: absolute;
+	left: -330px;
+	bottom: -10px;
+}
+
+.add-btn-footer {
+	position: relative;
+}

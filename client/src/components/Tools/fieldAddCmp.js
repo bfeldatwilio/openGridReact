@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import FieldSelectItem from "./fieldSelectItem";
 
-export default function FieldAddCmp({ onSelectionChange, fields, activeFields }) {
+export default function FieldAddCmp({ onSelectionChange, fields, activeFields, sr }) {
 	const [filteredFields, setFilteredFields] = useState([]);
 	useEffect(() => {
 		setFilteredFields(fields);
@@ -53,6 +53,7 @@ export default function FieldAddCmp({ onSelectionChange, fields, activeFields })
 			<section className="fields">
 				{filteredFields.map((field) => (
 					<FieldSelectItem
+						sr={sr}
 						key={field.name}
 						selected={activeFields}
 						field={field}

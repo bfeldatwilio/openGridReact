@@ -1,41 +1,54 @@
 import React, { useEffect, useState } from "react";
+import FieldRelationTree from "./fieldRelationTree";
 
-export default function FieldSelectItem(props) {
+export default function FieldSelectItem({ selected, field, onChange, sr }) {
 	const [checked, setChecked] = useState(false);
+	const [relationship, setRelationship] = useState();
 
 	useEffect(() => {
 		let imAlreadySelected =
-			props.selected.filter((selectedField) => selectedField.name === props.field.name)
-				.length > 0;
+			selected.filter((selectedField) => selectedField.name === field.name).length > 0;
 		setChecked(imAlreadySelected);
+		if (field.relationshipName) {
+			console.log(field.referenceTo);
+			console.log(field);
+			setRelationship(field.relationshipName);
+		}
 	}, []);
 
 	const fieldChangeHandler = (event) => {
 		let isChecked = event.target.checked;
 		setChecked(isChecked);
 		let changeObj = {
-			field: props.field,
+			field: field,
 			added: isChecked,
 		};
-		props.onChange(changeObj);
+		onChange(changeObj);
 	};
 	return (
 		<div className="slds-form-element">
 			<div className="slds-form-element__control">
-				<div className="slds-checkbox">
-					<input
-						type="checkbox"
-						name="options"
-						id={`${props.field.label}_chk`}
-						value={props.field.name}
-						onChange={fieldChangeHandler}
-						checked={checked}
-					/>
-					<label className="slds-checkbox__label" htmlFor={`${props.field.label}_chk`}>
-						<span className="slds-checkbox_faux"></span>
-						<span className="slds-form-element__label">{props.field.label}</span>
-					</label>
-				</div>
+				{relationship ? (
+					<FieldRelationTree
+						sr={sr}
+						relationship={relationship}
+						references={field.referenceTo}></FieldRelationTree>
+				) : (
+					<div className="slds-checkbox">
+						<input
+							type="checkbox"
+							name="options"
+							id={`${field.label}_chk`}
+							value={field.name}
+							onChange={fieldChangeHandler}
+							checked={checked}
+						/>
+						<label className="slds-checkbox__label" htmlFor={`${field.label}_chk`}>
+							<span className="slds-checkbox_faux"></span>
+							<span className="slds-form-element__label">{field.label}</span>
+						</label>
+					</div>
+				)}
 			</div>
 		</div>
 	);

@@ -3,15 +3,26 @@ import { ajaxCallGET } from "../../utils/canvasUtil";
 import ObjectAddCmp from "./objectAddCmp";
 import FieldAddCmp from "./fieldAddCmp";
 import "./tools.css";
-import FieldPills from "./fieldPills";
+import FieldFilterCmp from "./fieldFilterCmp";
 
 const OBJECTSEARCHURL = "/services/apexrest/entityDefinitions/";
 
-export default function Tools({ activeObject, loadedFields, sr, onFieldsSaved, onObjectSaved }) {
+export default function Tools({
+	activeObject,
+	loadedFields,
+	filters,
+	sr,
+	onFieldsSaved,
+	onObjectSaved,
+	onFilterChanged,
+}) {
 	const [sourceObj, setSourceObj] = useState();
 	const [objectFields, setObjectFields] = useState([]);
 	const [selectedFields, setSelectedFields] = useState([]);
+
 	const [fieldModalVisible, setFieldModalVisible] = useState(false);
+	const [filterModalVisible, setFilterModalVisible] = useState(false);
+
 	const [disableFieldSelect, setDisableFieldSelect] = useState(true);
 	const [disableFieldFilter, setDisableFieldFilter] = useState(true);
 	const [disableComputed, setDisableComputed] = useState(true);
@@ -49,11 +60,13 @@ export default function Tools({ activeObject, loadedFields, sr, onFieldsSaved, o
 
 	const fieldSaveClickHandler = () => {
 		setFieldModalVisible(false);
+		console.log(selectedFields);
 		let gridFields = selectedFields.map((field, index) => {
 			return {
 				label: field.label,
 				type: field.type,
 				name: field.name,
+				picklistValue: field.picklistValues,
 				columnOrder: index,
 			};
 		});
@@ -65,7 +78,7 @@ export default function Tools({ activeObject, loadedFields, sr, onFieldsSaved, o
 	};
 
 	const filterToolClickHandler = () => {
-		console.log("filter clicked");
+		setFilterModalVisible(true);
 	};
 
 	const computedToolClickHandler = () => {
@@ -99,7 +112,7 @@ export default function Tools({ activeObject, loadedFields, sr, onFieldsSaved, o
 					onClick={fieldToolClickHandler}
 					disabled={disableFieldSelect}
 					className="slds-button slds-button_neutral">
-					Fields
+					Fields ({selectedFields.length})
 				</button>
 			</div>
 			<div>
@@ -107,7 +120,7 @@ export default function Tools({ activeObject, loadedFields, sr, onFieldsSaved, o
 					onClick={filterToolClickHandler}
 					disabled={disableFieldFilter}
 					className="slds-button slds-button_neutral">
-					Filter
+					Filter ({filters.length})
 				</button>
 			</div>
 			<div>
@@ -126,7 +139,6 @@ export default function Tools({ activeObject, loadedFields, sr, onFieldsSaved, o
 					Highlight
 				</button>
 			</div>
-			{/* <FieldPills fields={selectedFields}></FieldPills> */}
 			{fieldModalVisible && (
 				<>
 					<section
@@ -157,6 +169,7 @@ export default function Tools({ activeObject, loadedFields, sr, onFieldsSaved, o
 								className="slds-modal__content slds-p-around_medium"
 								id="modal-content-id-1">
 								<FieldAddCmp
+									sr={sr}
 									onSelectionChange={selectedFieldChangeHandler}
 									activeFields={selectedFields}
 									fields={objectFields}></FieldAddCmp>
@@ -178,6 +191,13 @@ export default function Tools({ activeObject, loadedFields, sr, onFieldsSaved, o
 					</section>
 					<div className="slds-backdrop slds-backdrop_open" role="presentation"></div>
 				</>
+			)}
+			{filterModalVisible && (
+				<FieldFilterCmp
+					activeFields={selectedFields}
+					filters={filters}
+					onFilterChange={(filters) => onFilterChanged(filters)}
+					onCancel={() => setFilterModalVisible(false)}></FieldFilterCmp>
 			)}
 		</section>
 	);
