@@ -17,18 +17,18 @@ export default function FieldAddCmp({ onSelectionChange, fields, activeFields, s
 
 	const fieldCheckHandler = (fieldInfo) => {
 		const { added, field } = fieldInfo;
+
 		if (added) addFieldToSelectedFields(field);
 		else if (!added) removeFieldFromSelectedFields(field);
 	};
 
 	const addFieldToSelectedFields = (addedField) => {
 		let fields = [...activeFields, addedField];
-		console.log(fields);
 		onSelectionChange(fields);
 	};
 
 	const removeFieldFromSelectedFields = (removedField) => {
-		let fields = activeFields.filter((field) => field.name !== removedField.name);
+		let fields = activeFields.filter((field) => field.label !== removedField.label);
 		onSelectionChange(fields);
 	};
 

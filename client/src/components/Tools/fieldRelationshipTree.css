@@ -1,0 +1,14 @@
+.fieldRelationshipTreeContainer {
+	position: relative;
+	overflow: visible;
+}
+
+.popoverContainer {
+	position: absolute;
+	top: -80px;
+}
+
+.relatedFieldPopoverBody {
+	max-height: 200px;
+	overflow: scroll;
+}

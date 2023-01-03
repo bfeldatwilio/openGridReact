@@ -38,8 +38,9 @@ export default function AddFilterCmp({ fields, onFilterSet }) {
 
 	const fieldSelectClickHandler = (fieldLabel) => {
 		let fieldObject = fields.find((fieldObj) => fieldObj.label === fieldLabel);
+		console.log(fieldObject);
 		if (fieldObject.type === FIELDTYPES.PICKLIST) {
-			fieldObject.picklistValueLabels = fieldObject.picklistValue.map(
+			fieldObject.picklistValueLabels = fieldObject.picklistValues.map(
 				(picklistItem) => picklistItem.label
 			);
 		}

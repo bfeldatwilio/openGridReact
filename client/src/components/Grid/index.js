@@ -44,8 +44,36 @@ export default function Grid() {
 	const fetchGridData = async (object, fields, filters) => {
 		let graphStr = graphStringFromObjects(object, fields, filters);
 		let gridData = await graphqlQuery(sr, graphStr, object.QualifiedApiName);
-		console.log(gridData);
-		setGridData(gridData);
+		let formedData = formData(gridData);
+		setGridData(formedData);
+	};
+
+	const formData = (data) => {
+		let formed = data.edges.map((edge) => {
+			let node = edge.node;
+			let flattenedNode = flattenObj(node);
+			return flattenedNode;
+		});
+		return formed;
+	};
+
+	const flattenObj = (ob) => {
+		let result = {};
+		for (const i in ob) {
+			if (typeof ob[i] === "object" && !Array.isArray(ob[i])) {
+				const temp = flattenObj(ob[i]);
+				for (const j in temp) {
+					if (j === "value") {
+						result[i] = temp[j];
+					} else {
+						result[i + "." + j] = temp[j];
+					}
+				}
+			} else {
+				result[i] = ob[i];
+			}
+		}
+		return result;
 	};
 
 	const getGridObjFromStorage = () => {
@@ -76,10 +104,8 @@ export default function Grid() {
 	};
 
 	const graphStringFromObjects = (object, fields, filters) => {
-		console.log("filters!!!!!!!!!!!!!!");
-		console.log(filters);
 		let fieldQueryStr = "";
-		let filterQueryStr = "(first:200";
+		let filterQueryStr = "(first:100";
 		if (filters.length > 0) {
 			filterQueryStr += `, where: { and: [ `;
 			filters.forEach((filter) => {
@@ -90,10 +116,18 @@ export default function Grid() {
 			filterQueryStr = filterQueryStr += ")";
 		}
 		fields.forEach((field) => {
-			if (field.type === "id") {
-				fieldQueryStr += `Id `;
+			if (field.referencedFromName) {
+				if (field.type === "id") {
+					fieldQueryStr += `${field.referencedFromName} { Id }`;
+				} else {
+					fieldQueryStr += `${field.referencedFromName} { ${field.name} { value } }`;
+				}
 			} else {
-				fieldQueryStr += `${field.name} { value } `;
+				if (field.type === "id") {
+					fieldQueryStr += `Id `;
+				} else {
+					fieldQueryStr += `${field.name} { value } `;
+				}
 			}
 		});
 		let graph = `query openGrid {

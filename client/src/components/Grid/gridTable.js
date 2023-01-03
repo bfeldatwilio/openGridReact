@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 export default function GridTable({ data, fields }) {
 	return (
@@ -25,7 +25,9 @@ export default function GridTable({ data, fields }) {
 										<span className="slds-assistive-text">Sort by: </span>
 										<div className="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
 											<span className="slds-truncate" title="Name">
-												{field.label}
+												{field.referencedFromName
+													? `${field.referencedFromName}: ${field.label}`
+													: field.label}
 											</span>
 											<span className="slds-icon_container slds-icon-utility-arrowdown">
 												<svg
@@ -62,14 +64,12 @@ export default function GridTable({ data, fields }) {
 					</thead>
 					<tbody>
 						{data &&
-							data.edges.map((record) => (
+							data.map((record) => (
 								<tr aria-selected="false" className="slds-hint-parent">
-									{Object.keys(record.node).map((key, index) => (
+									{Object.keys(record).map((key, index) => (
 										<td className="slds-cell_action-mode" role="gridcell">
 											<div className="slds-truncate" title="Acme">
-												{key === "Id"
-													? record.node[key]
-													: record.node[key].value}
+												{record[key]}
 											</div>
 										</td>
 									))}

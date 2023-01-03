@@ -55,6 +55,7 @@ export default function Tools({
 	const fetchObjectDescribe = async (sourceObj) => {
 		let query = `${sr.client.instanceUrl}${sr.context.links.sobjectUrl}${sourceObj.QualifiedApiName}/describe`;
 		let res = await ajaxCallGET(sr, query);
+		console.log(res);
 		setObjectFields(res.fields);
 	};
 
@@ -66,10 +67,13 @@ export default function Tools({
 				label: field.label,
 				type: field.type,
 				name: field.name,
-				picklistValue: field.picklistValues,
+				referencedFromLabel: field.referencedFromLabel,
+				referencedFromName: field.referencedFromName,
+				picklistValues: field.picklistValues,
 				columnOrder: index,
 			};
 		});
+		console.log(gridFields);
 		onFieldsSaved(gridFields);
 	};
 
@@ -94,6 +98,7 @@ export default function Tools({
 	};
 
 	const selectedFieldChangeHandler = (fields) => {
+		console.log(fields);
 		setSelectedFields(fields);
 	};
 

@@ -9,19 +9,28 @@ export default function FieldSelectItem({ selected, field, onChange, sr }) {
 		let imAlreadySelected =
 			selected.filter((selectedField) => selectedField.name === field.name).length > 0;
 		setChecked(imAlreadySelected);
-		if (field.relationshipName) {
-			console.log(field.referenceTo);
-			console.log(field);
+		if (field.type === "reference") {
 			setRelationship(field.relationshipName);
 		}
 	}, []);
 
 	const fieldChangeHandler = (event) => {
 		let isChecked = event.target.checked;
+		console.log(field);
 		setChecked(isChecked);
 		let changeObj = {
 			field: field,
 			added: isChecked,
+		};
+		onChange(changeObj);
+	};
+
+	const relatedFieldSelectHandler = ({ adding, relatedField }) => {
+		relatedField.referencedFromName = field.relationshipName;
+		relatedField.referencedFromLabel = field.label;
+		let changeObj = {
+			field: relatedField,
+			added: adding,
 		};
 		onChange(changeObj);
 	};
@@ -32,7 +41,8 @@ export default function FieldSelectItem({ selected, field, onChange, sr }) {
 					<FieldRelationTree
 						sr={sr}
 						relationship={relationship}
-						references={field.referenceTo}></FieldRelationTree>
+						onFieldSelected={relatedFieldSelectHandler}
+						field={field}></FieldRelationTree>
 				) : (
 					<div className="slds-checkbox">
 						<input
