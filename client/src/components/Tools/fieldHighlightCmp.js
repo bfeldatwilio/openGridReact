@@ -1,17 +1,22 @@
-import React, { useEffect, useState } from "react";
-import "./fieldFilterCmp.css";
-import AddFilterCmp from "./addFilterCmp";
+import React from "react";
+import AddHighlightCmp from "./addHighlightCmp";
 
-export default function FieldFilterCmp({ activeFields, onCancel, onFilterChange, filters }) {
-	const filterSetHandler = (filter) => {
-		onFilterChange([...filters, filter]);
+export default function FieldHighlightCmp({
+	activeFields,
+	highlights,
+	onCancel,
+	onHighlightChange,
+}) {
+	const highlightSetHandler = (highlight) => {
+		onHighlightChange([...highlights, highlight]);
 	};
 
-	const removeFilterClickHandler = (index) => {
-		let remainingFilters = filters.filter((_, filterIndex) => filterIndex !== index);
-		onFilterChange(remainingFilters);
+	const removeHighlightClickHandler = (index) => {
+		let remainingHighlights = highlights.filter(
+			(_, highlightIndex) => highlightIndex !== index
+		);
+		onHighlightChange(remainingHighlights);
 	};
-
 	return (
 		<div
 			className="filterContainer slds-panel slds-size_medium slds-panel_docked slds-panel_docked-right slds-panel_drawer slds-is-open"
@@ -20,40 +25,41 @@ export default function FieldFilterCmp({ activeFields, onCancel, onFilterChange,
 			<div className="slds-panel__header">
 				<h2
 					className="slds-panel__header-title slds-text-heading_small slds-truncate"
-					title="Filter">
-					Filter
+					title="Highlight">
+					Highlights
 				</h2>
 				<div className="slds-panel__header-actions">
 					<button
 						onClick={() => onCancel()}
 						className="slds-button slds-button_icon slds-button_icon-small slds-panel__close"
-						title="Collapse Filter">
+						title="Collapse Highlights">
 						<svg className="slds-button__icon" aria-hidden="true">
 							<use xlinkHref="/assets/icons/utility-sprite/svg/symbols.svg#close"></use>
 						</svg>
-						<span className="slds-assistive-text">Collapse Filter</span>
+						<span className="slds-assistive-text">Collapse Highlights</span>
 					</button>
 				</div>
 			</div>
 			<div className="slds-panel__body">
 				<div className="slds-filters">
 					<h3 className="slds-text-body_small slds-m-vertical_x-small">
-						Matching all these filters
+						Showing all these Highlights
 					</h3>
 					<ol className="slds-list_vertical slds-list_vertical-space">
-						{filters.map((filter, index) => (
+						{highlights.map((highlight, index) => (
 							<li className="slds-item slds-hint-parent">
-								<div className="slds-filters__item slds-grid slds-grid_vertical-align-center">
+								<div
+									className={`slds-filters__item slds-grid slds-grid_vertical-align-center ${highlight.color}`}>
 									<button className="slds-button_reset slds-grow slds-has-blur-focus">
 										<span className="slds-show slds-text-body_small">
-											{filter.fieldName}
+											{highlight.fieldName}
 										</span>
 										<span className="slds-show">
-											{filter.operatorLabel} {filter.value}
+											{highlight.operatorLabel} {highlight.value}
 										</span>
 									</button>
 									<button
-										onClick={() => removeFilterClickHandler(index)}
+										onClick={() => removeHighlightClickHandler(index)}
 										className="slds-button slds-button_icon slds-button_icon slds-button_icon-small"
 										title="Remove equals THIS WEEK">
 										<svg
@@ -62,17 +68,17 @@ export default function FieldFilterCmp({ activeFields, onCancel, onFilterChange,
 											<use xlinkHref="/assets/icons/utility-sprite/svg/symbols.svg#delete"></use>
 										</svg>
 										<span className="slds-assistive-text">
-											Remove filter: {filter.fieldName} {filter.operatorLabel}{" "}
-											{filter.value}
+											Remove Highlight: {highlight.fieldName}{" "}
+											{highlight.operatorLabel} {highlight.value}
 										</span>
 									</button>
 								</div>
 							</li>
 						))}
 					</ol>
-					<AddFilterCmp
+					<AddHighlightCmp
 						fields={activeFields}
-						onFilterSet={filterSetHandler}></AddFilterCmp>
+						onHighlightSet={highlightSetHandler}></AddHighlightCmp>
 				</div>
 			</div>
 		</div>

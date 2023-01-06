@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import Dropdown from "./dropdown";
+import "./addHighlightCmp.css";
+
+const COLORS = ["red", "orange", "yellow", "green", "blue", "violet"];
 const OPERATORS = [
-	{ label: "Equal to", value: "eq" },
-	{ label: "Not Equal to", value: "ne" },
-	{ label: "Greater Than or Equal", value: "gte" },
-	{ label: "Less Than or Equal", value: "lte" },
+	{ label: "Equal to", value: "===" },
+	{ label: "Not Equal to", value: "!==" },
+	{ label: "Greater Than or Equal", value: ">=" },
+	{ label: "Less Than or Equal", value: "<=" },
 ];
 const FIELDTYPES = {
 	STRING: "string",
@@ -14,24 +17,26 @@ const FIELDTYPES = {
 	CURRENCY: "currency",
 	INT: "int",
 };
-export default function AddFilterCmp({ fields, onFilterSet }) {
-	const [filterField, setFilterField] = useState();
-	const [filterOperator, setFilterOperator] = useState(OPERATORS[0]);
-	const [filterValue, setFilterValue] = useState();
+export default function AddHighlightCmp({ fields, onHighlightSet }) {
+	const [highlightField, setHighlightField] = useState();
+	const [highlightOperator, setHighlightOperator] = useState(OPERATORS[0]);
+	const [highlightValue, setHighlightValue] = useState();
 	const [fieldType, setFieldType] = useState(FIELDTYPES.STRING);
 	const [showPopover, setShowPopover] = useState(false);
+	const [highlightColor, setHighlightColor] = useState();
 
-	const addFilterClickHandler = (e) => {
+	const addHighlightClickHandler = (e) => {
 		e.preventDefault();
-		let filter = {
-			fieldLabel: filterField.label,
-			fieldName: filterField.name,
-			fieldType: filterField.type,
-			operatorLabel: filterOperator.label,
-			operatorValue: filterOperator.value,
-			value: filterValue,
+		let highlight = {
+			fieldLabel: highlightField.label,
+			fieldName: highlightField.name,
+			fieldType: highlightField.type,
+			operatorLabel: highlightOperator.label,
+			operatorValue: highlightOperator.value,
+			value: highlightValue,
+			color: highlightColor,
 		};
-		onFilterSet(filter);
+		onHighlightSet(highlight);
 		setShowPopover(false);
 	};
 
@@ -42,25 +47,24 @@ export default function AddFilterCmp({ fields, onFilterSet }) {
 				(picklistItem) => picklistItem.label
 			);
 		}
-		setFilterField(fieldObject);
+		setHighlightField(fieldObject);
 		setFieldType(fieldObject.type);
 	};
 
 	const operatorSelectClickHandler = (operatorLabel) => {
 		let operatorObject = OPERATORS.find((operatorobj) => operatorobj.label === operatorLabel);
-		setFilterOperator(operatorObject);
+		setHighlightOperator(operatorObject);
 	};
 
 	const valueSelectClickHandler = (valueLabel) => {
-		setFilterValue(valueLabel);
+		setHighlightValue(valueLabel);
 	};
-
 	return (
 		<div className="slds-filters__footer slds-grid slds-shrink-none add-btn-footer">
 			<button
 				onClick={() => setShowPopover(true)}
 				className="slds-button_reset slds-text-link">
-				Add Filter
+				Add Highlight
 			</button>
 			{showPopover && (
 				<div className="filterPopoverContainer">
@@ -97,7 +101,7 @@ export default function AddFilterCmp({ fields, onFilterSet }) {
 										label="Value"
 										placeholder="Choose Picklist Item"
 										onItemSelected={valueSelectClickHandler}
-										options={filterField.picklistValueLabels}></Dropdown>
+										options={highlightField.picklistValueLabels}></Dropdown>
 								)}
 								{fieldType !== FIELDTYPES.PICKLIST && (
 									<div className="slds-form-element slds-form-element_stacked">
@@ -112,16 +116,32 @@ export default function AddFilterCmp({ fields, onFilterSet }) {
 												id="form-element-01"
 												placeholder="Placeholder text…"
 												className="slds-input"
-												onChange={(e) => setFilterValue(e.target.value)}
+												onChange={(e) => setHighlightValue(e.target.value)}
 											/>
 										</div>
 									</div>
 								)}
 								<div className="slds-form-element slds-form-element_stacked">
+									<label
+										className="slds-form-element__label"
+										for="form-element-01">
+										Highlight Color
+									</label>
+									<div className="colorPicker">
+										{COLORS.map((color) => (
+											<div
+												onClick={() => setHighlightColor(color)}
+												className={`${color} ${
+													highlightColor === color ? "selected" : ""
+												}`}></div>
+										))}
+									</div>
+								</div>
+								<div className="slds-form-element slds-form-element_stacked">
 									<button
-										onClick={addFilterClickHandler}
+										onClick={addHighlightClickHandler}
 										class="slds-button slds-button_brand">
-										Add Filter
+										Add Highlight
 									</button>
 								</div>
 							</form>

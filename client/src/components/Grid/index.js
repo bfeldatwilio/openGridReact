@@ -5,14 +5,8 @@ import Tools from "../Tools";
 import GridTable from "./gridTable";
 import "./grid.css";
 
-/*
-	grid object in storage
-	object
-		Label
-		QualifiedApiName
-	graph
-*/
 const PREFIX = "opengrid_";
+const GRIDCOUNT = "100";
 
 export default function Grid() {
 	const [sr, setSr] = useState();
@@ -20,9 +14,11 @@ export default function Grid() {
 	// const [openGridJSONObject, setOpenGridJSONObject] = useState();
 	const [activeFields, setActiveFields] = useState([]);
 	const [activeFilters, setActiveFilters] = useState([]);
+	const [activeHighlights, setActiveHighlights] = useState([]);
 	const [activeObject, setActiveObject] = useState();
 	const [gridData, setGridData] = useState();
 
+	// TODO update highlights on filter as new data is fetched
 	useEffect(() => {
 		populateSignedRequest();
 	}, []);
@@ -33,11 +29,16 @@ export default function Grid() {
 		}
 	}, [sr]);
 
-	//TODO want individual updates to trigger a fresh grid, but not when loaded...
+	useEffect(() => {
+		if (activeFields.length > 0) {
+			saveGridObjToStorage(activeObject, activeFields, activeFilters, activeHighlights);
+		}
+	}, [activeHighlights]);
+
 	useEffect(() => {
 		if (activeFields.length > 0) {
 			fetchGridData(activeObject, activeFields, activeFilters);
-			saveGridObjToStorage(activeObject, activeFields, activeFilters);
+			saveGridObjToStorage(activeObject, activeFields, activeFilters, activeHighlights);
 		}
 	}, [activeFields, activeFilters]);
 
@@ -47,7 +48,7 @@ export default function Grid() {
 		let formedData = formData(gridData);
 		setGridData(formedData);
 	};
-
+	//TODO add empty nodes
 	const formData = (data) => {
 		let formed = data.edges.map((edge) => {
 			let node = edge.node;
@@ -60,7 +61,7 @@ export default function Grid() {
 	const flattenObj = (ob) => {
 		let result = {};
 		for (const i in ob) {
-			if (typeof ob[i] === "object" && !Array.isArray(ob[i])) {
+			if (ob[i] !== null && typeof ob[i] === "object" && !Array.isArray(ob[i])) {
 				const temp = flattenObj(ob[i]);
 				for (const j in temp) {
 					if (j === "value") {
@@ -83,21 +84,23 @@ export default function Grid() {
 		let gridObject = localStorage.getItem(storageLocation);
 		if (gridObject) {
 			let gridObjectJSON = JSON.parse(gridObject);
-			let { object, fields, filters } = gridObjectJSON;
+			let { object, fields, filters, highlights } = gridObjectJSON;
 			setActiveObject(object);
 			setLoadedFields(fields);
 			setActiveFields(fields);
 			setActiveFilters(filters);
+			setActiveHighlights(highlights);
 		}
 	};
 
-	const saveGridObjToStorage = (obj, fields, filters) => {
+	const saveGridObjToStorage = (obj, fields, filters, highlights) => {
 		let page = sr.context.environment.locationUrl;
 		let storageLocation = PREFIX + page;
 		let openGridJSONObj = {
 			object: obj,
 			fields: fields,
 			filters: filters,
+			highlights: highlights,
 		};
 		let openGridStorageStr = JSON.stringify(openGridJSONObj);
 		localStorage.setItem(storageLocation, openGridStorageStr);
@@ -105,7 +108,14 @@ export default function Grid() {
 
 	const graphStringFromObjects = (object, fields, filters) => {
 		let fieldQueryStr = "";
-		let filterQueryStr = "(first:100";
+		let filterQueryStr = `(first:${GRIDCOUNT}`;
+		let sortByField = fields.filter((field) => field.activeSort)[0];
+		console.log(sortByField);
+		if (sortByField.referencedFromName) {
+			filterQueryStr += `, orderBy: { ${sortByField.name}: {${sortByField.referencedFromName}: {order: ${sortByField.sortOrder}}}}`;
+		} else {
+			filterQueryStr += `, orderBy: { ${sortByField.name}: {order: ${sortByField.sortOrder}}}`;
+		}
 		if (filters.length > 0) {
 			filterQueryStr += `, where: { and: [ `;
 			filters.forEach((filter) => {
@@ -115,6 +125,8 @@ export default function Grid() {
 		} else {
 			filterQueryStr = filterQueryStr += ")";
 		}
+		// TODO ending ) above closes out the modifiers.  Gotta get the orderBy in there by
+		// grabbing the sorted field and adding it's data in before closing it out
 		fields.forEach((field) => {
 			if (field.referencedFromName) {
 				if (field.type === "id") {
@@ -152,6 +164,11 @@ export default function Grid() {
 		return res.data.uiapi.query[apiName];
 	};
 
+	const columnFieldChangeHandler = (fields) => {
+		console.log(fields);
+		setActiveFields(fields);
+	};
+
 	const populateSignedRequest = () => {
 		getRefreshSignedRequest().then((data) => {
 			let payload = data.payload.response;
@@ -160,7 +177,6 @@ export default function Grid() {
 			let signedRequest = decode(part);
 			let signedRequestJSON = JSON.parse(signedRequest);
 			setSr(signedRequestJSON);
-			console.log(signedRequestJSON);
 		});
 	};
 
@@ -194,16 +210,22 @@ export default function Grid() {
 				{sr && (
 					<Tools
 						onFieldsSaved={setActiveFields}
+						onHighlightChanged={(highlights) => setActiveHighlights(highlights)}
 						onObjectSaved={setActiveObject}
 						activeObject={activeObject}
 						loadedFields={loadedFields}
 						filters={activeFilters}
+						highlights={activeHighlights}
 						onFilterChanged={(filters) => setActiveFilters(filters)}
 						sr={sr}
 					/>
 				)}
 				<div className="gridContainer">
-					<GridTable fields={activeFields} data={gridData}></GridTable>
+					<GridTable
+						highlights={activeHighlights}
+						fields={activeFields}
+						onColumnFieldChanged={columnFieldChangeHandler}
+						data={gridData}></GridTable>
 				</div>
 			</div>
 		</article>

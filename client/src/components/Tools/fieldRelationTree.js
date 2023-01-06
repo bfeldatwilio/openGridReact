@@ -2,7 +2,13 @@ import React, { useEffect, useState } from "react";
 import { ajaxCallGET } from "../../utils/canvasUtil";
 import "./fieldRelationshipTree.css";
 
-export default function FieldRelationTree({ relationship, field, onFieldSelected, sr }) {
+export default function FieldRelationTree({
+	relationship,
+	relationshipName,
+	field,
+	onFieldSelected,
+	sr,
+}) {
 	const [relatedFields, setRelatedFields] = useState();
 	const [popoverVisible, setPopoverVisible] = useState(false);
 
@@ -28,7 +34,7 @@ export default function FieldRelationTree({ relationship, field, onFieldSelected
 	return (
 		<div className="fieldRelationshipTreeContainer">
 			<button onClick={buttonClickHandler} className="slds-button">
-				{relationship} ({field.referenceTo[0]})
+				{relationshipName} ({relationship})
 			</button>
 			{popoverVisible && (
 				<section

@@ -4,6 +4,7 @@ import ObjectAddCmp from "./objectAddCmp";
 import FieldAddCmp from "./fieldAddCmp";
 import "./tools.css";
 import FieldFilterCmp from "./fieldFilterCmp";
+import FieldHighlightCmp from "./fieldHighlightCmp";
 
 const OBJECTSEARCHURL = "/services/apexrest/entityDefinitions/";
 
@@ -11,10 +12,12 @@ export default function Tools({
 	activeObject,
 	loadedFields,
 	filters,
+	highlights,
 	sr,
 	onFieldsSaved,
 	onObjectSaved,
 	onFilterChanged,
+	onHighlightChanged,
 }) {
 	const [sourceObj, setSourceObj] = useState();
 	const [objectFields, setObjectFields] = useState([]);
@@ -22,6 +25,7 @@ export default function Tools({
 
 	const [fieldModalVisible, setFieldModalVisible] = useState(false);
 	const [filterModalVisible, setFilterModalVisible] = useState(false);
+	const [highlightModalVisible, setHighlightModalVisible] = useState(false);
 
 	const [disableFieldSelect, setDisableFieldSelect] = useState(true);
 	const [disableFieldFilter, setDisableFieldFilter] = useState(true);
@@ -55,13 +59,11 @@ export default function Tools({
 	const fetchObjectDescribe = async (sourceObj) => {
 		let query = `${sr.client.instanceUrl}${sr.context.links.sobjectUrl}${sourceObj.QualifiedApiName}/describe`;
 		let res = await ajaxCallGET(sr, query);
-		console.log(res);
 		setObjectFields(res.fields);
 	};
 
 	const fieldSaveClickHandler = () => {
 		setFieldModalVisible(false);
-		console.log(selectedFields);
 		let gridFields = selectedFields.map((field, index) => {
 			return {
 				label: field.label,
@@ -70,10 +72,10 @@ export default function Tools({
 				referencedFromLabel: field.referencedFromLabel,
 				referencedFromName: field.referencedFromName,
 				picklistValues: field.picklistValues,
-				columnOrder: index,
+				sortOrder: "ASC",
+				activeSort: index === 0,
 			};
 		});
-		console.log(gridFields);
 		onFieldsSaved(gridFields);
 	};
 
@@ -90,7 +92,7 @@ export default function Tools({
 	};
 
 	const highlightToolClickHandler = () => {
-		console.log("highlight clicked");
+		setHighlightModalVisible(true);
 	};
 
 	const objectSelectedHandler = (object) => {
@@ -98,7 +100,6 @@ export default function Tools({
 	};
 
 	const selectedFieldChangeHandler = (fields) => {
-		console.log(fields);
 		setSelectedFields(fields);
 	};
 
@@ -141,7 +142,7 @@ export default function Tools({
 					onClick={highlightToolClickHandler}
 					disabled={disableHighlight}
 					className="slds-button slds-button_neutral">
-					Highlight
+					Highlight ({highlights.length})
 				</button>
 			</div>
 			{fieldModalVisible && (
@@ -201,8 +202,15 @@ export default function Tools({
 				<FieldFilterCmp
 					activeFields={selectedFields}
 					filters={filters}
-					onFilterChange={(filters) => onFilterChanged(filters)}
+					onFilterChange={onFilterChanged}
 					onCancel={() => setFilterModalVisible(false)}></FieldFilterCmp>
+			)}
+			{highlightModalVisible && (
+				<FieldHighlightCmp
+					onHighlightChange={onHighlightChanged}
+					activeFields={selectedFields}
+					highlights={highlights}
+					onCancel={() => setHighlightModalVisible(false)}></FieldHighlightCmp>
 			)}
 		</section>
 	);

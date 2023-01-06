@@ -1,0 +1,41 @@
+.colorPicker {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-around;
+	cursor: pointer;
+	padding: 10px 0;
+}
+
+.colorPicker > div {
+	width: 20px;
+	height: 20px;
+	border: solid 1px black;
+}
+
+.colorPicker > div.selected {
+	border: solid 2px black;
+}
+
+.red {
+	background-color: #ffaea5;
+}
+
+.orange {
+	background-color: #ffc8a2;
+}
+
+.yellow {
+	background-color: #ffffb5;
+}
+
+.green {
+	background-color: #cce2cb;
+}
+
+.blue {
+	background-color: #abdee6;
+}
+
+.violet {
+	background-color: #ecd5e3;
+}

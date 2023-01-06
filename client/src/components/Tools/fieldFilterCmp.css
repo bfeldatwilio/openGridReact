@@ -9,7 +9,7 @@
 .filterPopoverContainer {
 	position: absolute;
 	left: -330px;
-	bottom: -10px;
+	top: -100px;
 }
 
 .add-btn-footer {

@@ -1,6 +1,22 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
+import GridCell from "./gridCell";
+import GridColumn from "./GridColumn";
 
-export default function GridTable({ data, fields }) {
+export default function GridTable({ data, fields, highlights, onColumnFieldChanged }) {
+	const updateColumnDataHandler = (fieldColumn) => {
+		let updatedFields = fields.map((field) => {
+			let fieldIdentifier = fieldColumn.referencedFromName ? "referencedFromName" : "name";
+			if (field[fieldIdentifier] === fieldColumn[fieldIdentifier]) {
+				field.activeSort = true;
+				field.sortOrder = fieldColumn.sortOrder;
+			} else {
+				field.activeSort = false;
+			}
+			return field;
+		});
+		onColumnFieldChanged(updatedFields);
+	};
+
 	return (
 		<div>
 			{data && (
@@ -12,53 +28,9 @@ export default function GridTable({ data, fields }) {
 					<thead>
 						<tr className="slds-line-height_reset">
 							{fields.map((field) => (
-								<th
-									aria-label="Name"
-									aria-sort="ascending"
-									className="slds-is-resizable slds-is-sortable slds-is-sorted slds-is-sorted_asc slds-cell_action-mode"
-									scope="col">
-									<a
-										className="slds-th__action slds-text-link_reset"
-										href="#"
-										role="button"
-										tabIndex="0">
-										<span className="slds-assistive-text">Sort by: </span>
-										<div className="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
-											<span className="slds-truncate" title="Name">
-												{field.referencedFromName
-													? `${field.referencedFromName}: ${field.label}`
-													: field.label}
-											</span>
-											<span className="slds-icon_container slds-icon-utility-arrowdown">
-												<svg
-													className="slds-icon slds-icon-text-default slds-is-sortable__icon "
-													aria-hidden="true">
-													<use xlinkHref="/assets/icons/utility-sprite/svg/symbols.svg#arrowdown"></use>
-												</svg>
-											</span>
-										</div>
-									</a>
-									<span
-										className="slds-assistive-text"
-										aria-live="polite"
-										aria-atomic="true">
-										Sorted ascending
-									</span>
-									<div className="slds-resizable">
-										<input
-											type="range"
-											aria-label="Name column width"
-											className="slds-resizable__input slds-assistive-text"
-											id="cell-resize-handle-533"
-											max="1000"
-											min="20"
-											tabIndex="0"
-										/>
-										<span className="slds-resizable__handle">
-											<span className="slds-resizable__divider"></span>
-										</span>
-									</div>
-								</th>
+								<GridColumn
+									field={field}
+									onOrderChanged={updateColumnDataHandler}></GridColumn>
 							))}
 						</tr>
 					</thead>
@@ -66,12 +38,11 @@ export default function GridTable({ data, fields }) {
 						{data &&
 							data.map((record) => (
 								<tr aria-selected="false" className="slds-hint-parent">
-									{Object.keys(record).map((key, index) => (
-										<td className="slds-cell_action-mode" role="gridcell">
-											<div className="slds-truncate" title="Acme">
-												{record[key]}
-											</div>
-										</td>
+									{Object.keys(record).map((key) => (
+										<GridCell
+											highlights={highlights}
+											cellKey={key}
+											cellValue={record[key]}></GridCell>
 									))}
 								</tr>
 							))}

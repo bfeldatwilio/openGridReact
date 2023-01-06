@@ -4,19 +4,20 @@ import FieldRelationTree from "./fieldRelationTree";
 export default function FieldSelectItem({ selected, field, onChange, sr }) {
 	const [checked, setChecked] = useState(false);
 	const [relationship, setRelationship] = useState();
+	const [relationshipName, setRelationshipName] = useState();
 
 	useEffect(() => {
 		let imAlreadySelected =
 			selected.filter((selectedField) => selectedField.name === field.name).length > 0;
 		setChecked(imAlreadySelected);
 		if (field.type === "reference") {
-			setRelationship(field.relationshipName);
+			setRelationship(field.referenceTo[0]);
+			setRelationshipName(field.relationshipName);
 		}
 	}, []);
 
 	const fieldChangeHandler = (event) => {
 		let isChecked = event.target.checked;
-		console.log(field);
 		setChecked(isChecked);
 		let changeObj = {
 			field: field,
@@ -41,6 +42,7 @@ export default function FieldSelectItem({ selected, field, onChange, sr }) {
 					<FieldRelationTree
 						sr={sr}
 						relationship={relationship}
+						relationshipName={relationshipName}
 						onFieldSelected={relatedFieldSelectHandler}
 						field={field}></FieldRelationTree>
 				) : (
