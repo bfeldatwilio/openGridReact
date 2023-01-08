@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { ajaxCallGET } from "../../utils/canvasUtil";
 import "./fieldRelationshipTree.css";
+import FieldRelationTreeItem from "./fieldRelationTreeItem";
 
 export default function FieldRelationTree({
 	relationship,
 	relationshipName,
-	field,
+	selected,
+	fieldName,
 	onFieldSelected,
 	sr,
 }) {
@@ -19,13 +21,7 @@ export default function FieldRelationTree({
 		}
 	};
 
-	const onItemSelected = (event) => {
-		let checked = event.target.checked;
-		let fieldName = event.target.value;
-		let relatedField = relatedFields.find((relatedField) => relatedField.name === fieldName);
-		onFieldSelected({ adding: checked, relatedField: relatedField });
-	};
-
+	// TODO Got the name to match but it's matching for all related objects
 	const fetchObject = async () => {
 		let query = `${sr.client.instanceUrl}${sr.context.links.sobjectUrl}${relationship}/describe`;
 		let res = await ajaxCallGET(sr, query);
@@ -56,23 +52,11 @@ export default function FieldRelationTree({
 						className="slds-popover__body relatedFieldPopoverBody">
 						{relatedFields &&
 							relatedFields.map((relatedField) => (
-								<div className="slds-checkbox">
-									<input
-										type="checkbox"
-										name="options"
-										id={`${relatedField.label}_chk`}
-										value={relatedField.name}
-										onChange={onItemSelected}
-									/>
-									<label
-										className="slds-checkbox__label"
-										htmlFor={`${relatedField.label}_chk`}>
-										<span className="slds-checkbox_faux"></span>
-										<span className="slds-form-element__label">
-											{relatedField.label}
-										</span>
-									</label>
-								</div>
+								<FieldRelationTreeItem
+									fieldName={fieldName}
+									allRelatedSelected={selected}
+									onFieldSelected={onFieldSelected}
+									relatedField={relatedField}></FieldRelationTreeItem>
 							))}
 					</div>
 				</section>

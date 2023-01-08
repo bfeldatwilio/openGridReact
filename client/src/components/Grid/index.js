@@ -6,12 +6,12 @@ import GridTable from "./gridTable";
 import "./grid.css";
 
 const PREFIX = "opengrid_";
-const GRIDCOUNT = "200";
+const GRIDCOUNT = "50";
 
 export default function Grid() {
 	const [sr, setSr] = useState();
+	const [loading, setLoading] = useState(true);
 	const [loadedFields, setLoadedFields] = useState([]);
-	// const [openGridJSONObject, setOpenGridJSONObject] = useState();
 	const [activeFields, setActiveFields] = useState([]);
 	const [activeFilters, setActiveFilters] = useState([]);
 	const [activeHighlights, setActiveHighlights] = useState([]);
@@ -43,10 +43,12 @@ export default function Grid() {
 	}, [activeFields, activeFilters]);
 
 	const fetchGridData = async (object, fields, filters) => {
+		setLoading(true);
 		let graphStr = graphStringFromObjects(object, fields, filters);
 		let gridData = await graphqlQuery(sr, graphStr, object.QualifiedApiName);
 		let formedData = formData(gridData);
 		setGridData(formedData);
+		setLoading(false);
 	};
 	//TODO add empty nodes
 	const formData = (data) => {
@@ -211,6 +213,19 @@ export default function Grid() {
 				</header>
 			</div>
 			<div class="slds-card__body slds-card__body_inner">
+				{loading && (
+					<div class="loadingContainer">
+						<div class="slds-spinner_container">
+							<div
+								role="status"
+								class="slds-spinner slds-spinner_medium slds-spinner_brand">
+								<span class="slds-assistive-text">Loading</span>
+								<div class="slds-spinner__dot-a"></div>
+								<div class="slds-spinner__dot-b"></div>
+							</div>
+						</div>
+					</div>
+				)}
 				{sr && (
 					<Tools
 						onFieldsSaved={setActiveFields}

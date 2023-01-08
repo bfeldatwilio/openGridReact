@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import FieldRelationTree from "./fieldRelationTree";
 
-export default function FieldSelectItem({ selected, field, onChange, sr }) {
+export default function FieldSelectItem({ selected, relatedSelected, field, onChange, sr }) {
 	const [checked, setChecked] = useState(false);
 	const [relationship, setRelationship] = useState();
 	const [relationshipName, setRelationshipName] = useState();
@@ -41,10 +41,11 @@ export default function FieldSelectItem({ selected, field, onChange, sr }) {
 				{relationship ? (
 					<FieldRelationTree
 						sr={sr}
+						fieldName={field.relationshipName}
+						selected={relatedSelected}
 						relationship={relationship}
 						relationshipName={relationshipName}
-						onFieldSelected={relatedFieldSelectHandler}
-						field={field}></FieldRelationTree>
+						onFieldSelected={relatedFieldSelectHandler}></FieldRelationTree>
 				) : (
 					<div className="slds-checkbox">
 						<input

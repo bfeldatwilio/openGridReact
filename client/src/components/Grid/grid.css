@@ -1,3 +1,10 @@
 .gridContainer {
 	margin-top: 15px;
 }
+
+.loadingContainer {
+	position: absolute;
+	height: 100%;
+	left: 0;
+	right: 0;
+}

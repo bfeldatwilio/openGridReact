@@ -3,9 +3,21 @@ import FieldSelectItem from "./fieldSelectItem";
 
 export default function FieldAddCmp({ onSelectionChange, fields, activeFields, sr }) {
 	const [filteredFields, setFilteredFields] = useState([]);
+	const [relatedSelected, setRelatedSelected] = useState([]);
 	useEffect(() => {
 		setFilteredFields(fields);
 	}, []);
+
+	useEffect(() => {
+		findAndSetRelatedSelected(activeFields);
+	}, [activeFields]);
+
+	const findAndSetRelatedSelected = (selectedFields) => {
+		let selectedRelated = selectedFields.filter((field) =>
+			field.hasOwnProperty("referencedFromName")
+		);
+		setRelatedSelected(selectedRelated);
+	};
 
 	const fieldFilterChangeHandler = (event) => {
 		const searchTerm = event.target.value;
@@ -56,6 +68,7 @@ export default function FieldAddCmp({ onSelectionChange, fields, activeFields, s
 						sr={sr}
 						key={field.name}
 						selected={activeFields}
+						relatedSelected={relatedSelected}
 						field={field}
 						onChange={fieldCheckHandler}></FieldSelectItem>
 				))}
