@@ -1,10 +1,6 @@
 import React, { useEffect } from "react";
 
 export default function GridColumn({ field, onOrderChanged }) {
-	useEffect(() => {
-		console.log(field);
-	}, [field]);
-
 	const onOrderClicked = (e) => {
 		e.preventDefault();
 		field.sortOrder = field.sortOrder === "ASC" ? "DESC" : "ASC";

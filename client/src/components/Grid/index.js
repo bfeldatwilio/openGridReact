@@ -6,7 +6,7 @@ import GridTable from "./gridTable";
 import "./grid.css";
 
 const PREFIX = "opengrid_";
-const GRIDCOUNT = "100";
+const GRIDCOUNT = "200";
 
 export default function Grid() {
 	const [sr, setSr] = useState();
@@ -119,7 +119,11 @@ export default function Grid() {
 		if (filters.length > 0) {
 			filterQueryStr += `, where: { and: [ `;
 			filters.forEach((filter) => {
-				filterQueryStr += `{ ${filter.fieldName}: {${filter.operatorValue}: "${filter.value}" }}, `;
+				const valueStr =
+					filter.fieldType === "date"
+						? `{value: "${filter.value}"}`
+						: `"${filter.value}"`;
+				filterQueryStr += `{ ${filter.fieldName}: {${filter.operatorValue}: ${valueStr} }}, `;
 			});
 			filterQueryStr += `] })`;
 		} else {

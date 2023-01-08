@@ -10,12 +10,12 @@ const OPERATORS = [
 	{ label: "Less Than or Equal", value: "<=" },
 ];
 const FIELDTYPES = {
-	STRING: "string",
-	DATE: "date",
-	PERCENT: "percent",
-	PICKLIST: "picklist",
-	CURRENCY: "currency",
-	INT: "int",
+	STRING: { value: "string", inputType: "text" },
+	DATE: { value: "date", inputType: "date" },
+	PERCENT: { value: "percent", inputType: "text" },
+	PICKLIST: { value: "picklist", inputType: "text" },
+	CURRENCY: { value: "currency", inputType: "number" },
+	INT: { value: "int", inputType: "number" },
 };
 export default function AddHighlightCmp({ fields, onHighlightSet }) {
 	const [highlightField, setHighlightField] = useState();
@@ -42,13 +42,13 @@ export default function AddHighlightCmp({ fields, onHighlightSet }) {
 
 	const fieldSelectClickHandler = (fieldLabel) => {
 		let fieldObject = fields.find((fieldObj) => fieldObj.label === fieldLabel);
-		if (fieldObject.type === FIELDTYPES.PICKLIST) {
+		if (fieldObject.type === FIELDTYPES.PICKLIST.value) {
 			fieldObject.picklistValueLabels = fieldObject.picklistValues.map(
 				(picklistItem) => picklistItem.label
 			);
 		}
 		setHighlightField(fieldObject);
-		setFieldType(fieldObject.type);
+		setFieldType(FIELDTYPES[fieldObject.type.toUpperCase()]);
 	};
 
 	const operatorSelectClickHandler = (operatorLabel) => {
@@ -96,14 +96,14 @@ export default function AddHighlightCmp({ fields, onHighlightSet }) {
 									options={OPERATORS.map(
 										(operator) => operator.label
 									)}></Dropdown>
-								{fieldType === FIELDTYPES.PICKLIST && (
+								{fieldType === FIELDTYPES.PICKLIST.value && (
 									<Dropdown
 										label="Value"
 										placeholder="Choose Picklist Item"
 										onItemSelected={valueSelectClickHandler}
 										options={highlightField.picklistValueLabels}></Dropdown>
 								)}
-								{fieldType !== FIELDTYPES.PICKLIST && (
+								{fieldType !== FIELDTYPES.PICKLIST.value && (
 									<div className="slds-form-element slds-form-element_stacked">
 										<label
 											className="slds-form-element__label"
@@ -112,7 +112,7 @@ export default function AddHighlightCmp({ fields, onHighlightSet }) {
 										</label>
 										<div className="slds-form-element__control">
 											<input
-												type="text"
+												type={fieldType.inputType}
 												id="form-element-01"
 												placeholder="Placeholder text…"
 												className="slds-input"

@@ -23,6 +23,10 @@ export default function GridCell({ cellKey, cellValue, highlights }) {
 		let operatorStr = "";
 		if (highlight.value.includes(" ")) {
 			operatorStr = `"${cellValue}" ${highlight.operatorValue} "${highlight.value}"`;
+		} else if (highlight.fieldType === "date") {
+			let cellDate = Date.parse(cellValue);
+			let highlightDate = Date.parse(highlight.value);
+			operatorStr = `${cellDate} ${highlight.operatorValue} ${highlightDate}`;
 		} else {
 			operatorStr = `${cellValue} ${highlight.operatorValue} ${highlight.value}`;
 		}
