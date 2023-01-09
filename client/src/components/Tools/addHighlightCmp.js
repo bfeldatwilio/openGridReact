@@ -96,14 +96,14 @@ export default function AddHighlightCmp({ fields, onHighlightSet }) {
 									options={OPERATORS.map(
 										(operator) => operator.label
 									)}></Dropdown>
-								{fieldType === FIELDTYPES.PICKLIST.value && (
+								{fieldType.value === FIELDTYPES.PICKLIST.value && (
 									<Dropdown
 										label="Value"
 										placeholder="Choose Picklist Item"
 										onItemSelected={valueSelectClickHandler}
 										options={highlightField.picklistValueLabels}></Dropdown>
 								)}
-								{fieldType !== FIELDTYPES.PICKLIST.value && (
+								{fieldType.value !== FIELDTYPES.PICKLIST.value && (
 									<div className="slds-form-element slds-form-element_stacked">
 										<label
 											className="slds-form-element__label"
@@ -139,6 +139,9 @@ export default function AddHighlightCmp({ fields, onHighlightSet }) {
 								</div>
 								<div className="slds-form-element slds-form-element_stacked">
 									<button
+										disabled={
+											!(highlightField && highlightOperator && highlightValue)
+										}
 										onClick={addHighlightClickHandler}
 										class="slds-button slds-button_brand">
 										Add Highlight

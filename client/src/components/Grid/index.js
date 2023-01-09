@@ -92,6 +92,8 @@ export default function Grid() {
 			setActiveFields(fields);
 			setActiveFilters(filters);
 			setActiveHighlights(highlights);
+		} else {
+			setLoading(false);
 		}
 	};
 
@@ -112,20 +114,25 @@ export default function Grid() {
 		let fieldQueryStr = "";
 		let filterQueryStr = `(first:${GRIDCOUNT}`;
 		let sortByField = fields.filter((field) => field.activeSort)[0];
-		console.log(sortByField);
 		if (sortByField.referencedFromName) {
-			filterQueryStr += `, orderBy: { ${sortByField.name}: {${sortByField.referencedFromName}: {order: ${sortByField.sortOrder}}}}`;
+			filterQueryStr += `, orderBy: { ${sortByField.referencedFromName}: {${sortByField.name}: {order: ${sortByField.sortOrder}}}}`;
 		} else {
 			filterQueryStr += `, orderBy: { ${sortByField.name}: {order: ${sortByField.sortOrder}}}`;
 		}
 		if (filters.length > 0) {
 			filterQueryStr += `, where: { and: [ `;
 			filters.forEach((filter) => {
+				if (filter.referencedFromName) {
+					filterQueryStr += `{${filter.referencedFromName}: `;
+				}
 				const valueStr =
 					filter.fieldType === "date"
 						? `{value: "${filter.value}"}`
 						: `"${filter.value}"`;
 				filterQueryStr += `{ ${filter.fieldName}: {${filter.operatorValue}: ${valueStr} }}, `;
+				if (filter.referencedFromName) {
+					filterQueryStr += `}, `;
+				}
 			});
 			filterQueryStr += `] })`;
 		} else {
@@ -136,9 +143,9 @@ export default function Grid() {
 		fields.forEach((field) => {
 			if (field.referencedFromName) {
 				if (field.type === "id") {
-					fieldQueryStr += `${field.referencedFromName} { Id }`;
+					fieldQueryStr += `${field.referencedFromName} { Id } `;
 				} else {
-					fieldQueryStr += `${field.referencedFromName} { ${field.name} { value } }`;
+					fieldQueryStr += `${field.referencedFromName} { ${field.name} { value } } `;
 				}
 			} else {
 				if (field.type === "id") {
@@ -171,7 +178,6 @@ export default function Grid() {
 	};
 
 	const columnFieldChangeHandler = (fields) => {
-		console.log(fields);
 		setActiveFields(fields);
 	};
 

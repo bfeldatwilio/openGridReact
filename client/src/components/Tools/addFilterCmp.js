@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Dropdown from "./dropdown";
+import FieldFilterCmp from "./fieldFilterCmp";
 const OPERATORS = [
 	{ label: "Equal to", value: "eq" },
 	{ label: "Not Equal to", value: "ne" },
@@ -22,6 +23,7 @@ export default function AddFilterCmp({ fields, onFilterSet }) {
 	const [showPopover, setShowPopover] = useState(false);
 
 	const addFilterClickHandler = (e) => {
+		console.log(filterField);
 		e.preventDefault();
 		let filter = {
 			fieldLabel: filterField.label,
@@ -30,18 +32,34 @@ export default function AddFilterCmp({ fields, onFilterSet }) {
 			operatorLabel: filterOperator.label,
 			operatorValue: filterOperator.value,
 			value: filterValue,
+			referencedFromName: filterField.referencedFromName,
 		};
 		onFilterSet(filter);
 		setShowPopover(false);
 	};
 
 	const fieldSelectClickHandler = (fieldLabel) => {
-		let fieldObject = fields.find((fieldObj) => fieldObj.label === fieldLabel);
+		let referenceFromName;
+		let fieldObject;
+		if (fieldLabel.includes(": ")) {
+			let fieldNameArr = fieldLabel.split(": ");
+			referenceFromName = fieldNameArr[0];
+			fieldLabel = fieldNameArr[1];
+			fieldObject = fields.find((fieldObj) => {
+				return (
+					fieldObj.label === fieldLabel &&
+					referenceFromName === fieldObj.referencedFromName
+				);
+			});
+		} else {
+			fieldObject = fields.find((fieldObj) => fieldObj.label === fieldLabel);
+		}
 		if (fieldObject.type === FIELDTYPES.PICKLIST.value) {
 			fieldObject.picklistValueLabels = fieldObject.picklistValues.map(
 				(picklistItem) => picklistItem.label
 			);
 		}
+		console.log(fieldObject);
 		setFilterField(fieldObject);
 		setFieldType(FIELDTYPES[fieldObject.type.toUpperCase()]);
 	};
@@ -84,7 +102,11 @@ export default function AddFilterCmp({ fields, onFilterSet }) {
 									label="Field"
 									placeholder="Choose Field"
 									onItemSelected={fieldSelectClickHandler}
-									options={fields.map((field) => field.label)}></Dropdown>
+									options={fields.map((field) =>
+										field.referencedFromName
+											? `${field.referencedFromName}: ${field.label}`
+											: field.label
+									)}></Dropdown>
 								<Dropdown
 									label="Operator"
 									placeholder="Choose Operator"
@@ -119,6 +141,7 @@ export default function AddFilterCmp({ fields, onFilterSet }) {
 								)}
 								<div className="slds-form-element slds-form-element_stacked">
 									<button
+										disabled={!(filterField && filterOperator && filterValue)}
 										onClick={addFilterClickHandler}
 										class="slds-button slds-button_brand">
 										Add Filter

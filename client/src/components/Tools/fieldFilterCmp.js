@@ -7,6 +7,10 @@ export default function FieldFilterCmp({ activeFields, onCancel, onFilterChange,
 		onFilterChange([...filters, filter]);
 	};
 
+	useEffect(() => {
+		console.log(filters);
+	}, []);
+
 	const removeFilterClickHandler = (index) => {
 		let remainingFilters = filters.filter((_, filterIndex) => filterIndex !== index);
 		onFilterChange(remainingFilters);
@@ -46,7 +50,9 @@ export default function FieldFilterCmp({ activeFields, onCancel, onFilterChange,
 								<div className="slds-filters__item slds-grid slds-grid_vertical-align-center">
 									<button className="slds-button_reset slds-grow slds-has-blur-focus">
 										<span className="slds-show slds-text-body_small">
-											{filter.fieldName}
+											{filter.referencedFromName
+												? `${filter.referencedFromName}: ${filter.fieldName}`
+												: filter.fieldName}
 										</span>
 										<span className="slds-show">
 											{filter.operatorLabel} {filter.value}
