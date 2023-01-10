@@ -8,12 +8,6 @@ export default function GridCell({ cellKey, record, highlights, field, onRecordU
 	const [updatedValue, setUpdatedValue] = useState();
 
 	useEffect(() => {
-		if (updatedValue) {
-			console.log(updatedValue);
-		}
-	}, [updatedValue]);
-
-	useEffect(() => {
 		let myHighlights = highlights.filter((highlight) => {
 			let referenceProp = field.referencedFromName
 				? `${field.referencedFromName}.${highlight.fieldName}`
@@ -49,9 +43,13 @@ export default function GridCell({ cellKey, record, highlights, field, onRecordU
 	};
 
 	const saveClickHandler = () => {
-		console.log(updatedValue);
-		record[cellKey] = updatedValue;
-		onRecordUpdated(record);
+		let recordUpdateObj = {
+			Id: record.Id,
+			patchObj: {},
+		};
+		recordUpdateObj.patchObj[cellKey] = updatedValue;
+		console.log(recordUpdateObj);
+		onRecordUpdated(recordUpdateObj);
 		setEditEnabled(false);
 	};
 

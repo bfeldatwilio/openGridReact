@@ -10,7 +10,7 @@ const ajaxCall = async (sr, method, url, body) => {
 				} else {
 					console.log("Not 200@!#$%@!#$%!#$%");
 					console.log(data);
-					reject(data.status);
+					reject(data.payload);
 				}
 			},
 		});
@@ -35,7 +35,7 @@ const graphQLPOST = async (sr, graph) => {
 				} else {
 					console.log("Not 200@!#$%@!#$%!#$%");
 					console.log(data);
-					reject(data.status);
+					reject(data.payload);
 				}
 			},
 		});

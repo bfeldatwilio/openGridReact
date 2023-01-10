@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { graphQLPOST, getRefreshSignedRequest, decode } from "../../utils/canvasUtil";
+import { graphQLPOST, getRefreshSignedRequest, decode, ajaxCall } from "../../utils/canvasUtil";
 import "@salesforce/canvas-js-sdk";
 import Tools from "../Tools";
 import GridTable from "./gridTable";
 import "./grid.css";
+import Toast from "./toast";
 
 const PREFIX = "opengrid_";
 const GRIDCOUNT = "50";
@@ -17,6 +18,8 @@ export default function Grid() {
 	const [activeHighlights, setActiveHighlights] = useState([]);
 	const [activeObject, setActiveObject] = useState();
 	const [gridData, setGridData] = useState();
+	const [errorMessage, setErrorMessage] = useState();
+	const [showToast, setShowToast] = useState(false);
 
 	// TODO update highlights on filter as new data is fetched
 	useEffect(() => {
@@ -86,7 +89,6 @@ export default function Grid() {
 		let gridObject = localStorage.getItem(storageLocation);
 		if (gridObject) {
 			let gridObjectJSON = JSON.parse(gridObject);
-			console.log(gridObjectJSON);
 			let { object, fields, filters, highlights } = gridObjectJSON;
 			setActiveObject(object);
 			setLoadedFields(fields);
@@ -154,7 +156,7 @@ export default function Grid() {
 				}
 			}
 		});
-		let graph = `query openGrid {
+		let graph = `{
 			uiapi {
 			  query {
 				${object.QualifiedApiName}${filterQueryStr} {
@@ -180,12 +182,25 @@ export default function Grid() {
 		setActiveFields(fields);
 	};
 
-	const recordUpdatedHandler = async (record) => {
-		console.log(record);
-		// ajaxCall(sr, "PATCH", agreement.attributes.url, record).then((data) => {
-		// 	setDefaultState();
-		// 	LoadComponentData();
-		// });
+	const recordUpdatedHandler = async (recordUpdateObj) => {
+		setLoading(true);
+		const url = `${sr.client.instanceUrl}${sr.context.links.sobjectUrl}${activeObject.QualifiedApiName}/${recordUpdateObj.Id}`;
+		ajaxCall(sr, "PATCH", url, recordUpdateObj.patchObj)
+			.then((res) => {
+				fetchGridData(activeObject, activeFields, activeFilters);
+			})
+			.catch((e) => {
+				setLoading(false);
+				handleError(e);
+			});
+	};
+
+	const handleError = (error) => {
+		let message = error[0].message;
+		console.log(message);
+		setErrorMessage(message);
+		setLoading(false);
+		setShowToast(true);
 	};
 
 	const populateSignedRequest = () => {
@@ -201,6 +216,9 @@ export default function Grid() {
 
 	return (
 		<article class="slds-card">
+			{showToast && (
+				<Toast onCloseToast={() => setShowToast(false)} message={errorMessage}></Toast>
+			)}
 			<div class="slds-card__header slds-grid">
 				<header class="slds-media slds-media_center slds-has-flexi-truncate">
 					<div class="slds-media__figure">
