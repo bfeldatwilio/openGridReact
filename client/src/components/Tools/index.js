@@ -72,6 +72,7 @@ export default function Tools({
 				referencedFromLabel: field.referencedFromLabel,
 				referencedFromName: field.referencedFromName,
 				picklistValues: field.picklistValues,
+				picklistValueLabels: field.picklistValueLabels,
 				sortOrder: "ASC",
 				activeSort: index === 0,
 			};

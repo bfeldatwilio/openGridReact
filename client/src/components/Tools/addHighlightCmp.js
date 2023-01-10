@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Dropdown from "./dropdown";
+import { FIELDTYPES } from "../../utils/constants";
 import "./addHighlightCmp.css";
 
 const COLORS = ["red", "orange", "yellow", "green", "blue", "violet"];
@@ -9,14 +10,7 @@ const OPERATORS = [
 	{ label: "Greater Than or Equal", value: ">=" },
 	{ label: "Less Than or Equal", value: "<=" },
 ];
-const FIELDTYPES = {
-	STRING: { value: "string", inputType: "text" },
-	DATE: { value: "date", inputType: "date" },
-	PERCENT: { value: "percent", inputType: "text" },
-	PICKLIST: { value: "picklist", inputType: "text" },
-	CURRENCY: { value: "currency", inputType: "number" },
-	INT: { value: "int", inputType: "number" },
-};
+
 export default function AddHighlightCmp({ fields, onHighlightSet }) {
 	const [highlightField, setHighlightField] = useState();
 	const [highlightOperator, setHighlightOperator] = useState(OPERATORS[0]);
@@ -35,17 +29,27 @@ export default function AddHighlightCmp({ fields, onHighlightSet }) {
 			operatorValue: highlightOperator.value,
 			value: highlightValue,
 			color: highlightColor,
+			referencedFromName: highlightField.referencedFromName,
 		};
 		onHighlightSet(highlight);
 		setShowPopover(false);
 	};
 
 	const fieldSelectClickHandler = (fieldLabel) => {
-		let fieldObject = fields.find((fieldObj) => fieldObj.label === fieldLabel);
-		if (fieldObject.type === FIELDTYPES.PICKLIST.value) {
-			fieldObject.picklistValueLabels = fieldObject.picklistValues.map(
-				(picklistItem) => picklistItem.label
-			);
+		let referenceFromName;
+		let fieldObject;
+		if (fieldLabel.includes(": ")) {
+			let fieldNameArr = fieldLabel.split(": ");
+			referenceFromName = fieldNameArr[0];
+			fieldLabel = fieldNameArr[1];
+			fieldObject = fields.find((fieldObj) => {
+				return (
+					fieldObj.label === fieldLabel &&
+					referenceFromName === fieldObj.referencedFromName
+				);
+			});
+		} else {
+			fieldObject = fields.find((fieldObj) => fieldObj.label === fieldLabel);
 		}
 		setHighlightField(fieldObject);
 		setFieldType(FIELDTYPES[fieldObject.type.toUpperCase()]);
@@ -88,7 +92,11 @@ export default function AddHighlightCmp({ fields, onHighlightSet }) {
 									label="Field"
 									placeholder="Choose Field"
 									onItemSelected={fieldSelectClickHandler}
-									options={fields.map((field) => field.label)}></Dropdown>
+									options={fields.map((field) =>
+										field.referencedFromName
+											? `${field.referencedFromName}: ${field.label}`
+											: field.label
+									)}></Dropdown>
 								<Dropdown
 									label="Operator"
 									placeholder="Choose Operator"
@@ -140,7 +148,12 @@ export default function AddHighlightCmp({ fields, onHighlightSet }) {
 								<div className="slds-form-element slds-form-element_stacked">
 									<button
 										disabled={
-											!(highlightField && highlightOperator && highlightValue)
+											!(
+												highlightField &&
+												highlightOperator &&
+												highlightValue &&
+												highlightColor
+											)
 										}
 										onClick={addHighlightClickHandler}
 										class="slds-button slds-button_brand">

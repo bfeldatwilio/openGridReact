@@ -1,0 +1,12 @@
+.inline-edit-container {
+	position: absolute;
+	top: 0;
+	left: 0.0625rem;
+}
+
+.inline-control-container {
+	padding-top: 5px;
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-end;
+}

@@ -2,7 +2,17 @@ import React, { useEffect } from "react";
 import GridCell from "./gridCell";
 import GridColumn from "./GridColumn";
 
-export default function GridTable({ data, fields, highlights, onColumnFieldChanged }) {
+export default function GridTable({
+	data,
+	fields,
+	highlights,
+	onColumnFieldChanged,
+	onRecordUpdated,
+}) {
+	// useEffect(() => {
+	// 	console.log(fields);
+	// 	console.log(data);
+	// }, [data]);
 	const updateColumnDataHandler = (fieldColumn) => {
 		let updatedFields = fields.map((field) => {
 			let fieldIdentifier = fieldColumn.referencedFromName ? "referencedFromName" : "name";
@@ -38,11 +48,13 @@ export default function GridTable({ data, fields, highlights, onColumnFieldChang
 						{data &&
 							data.map((record) => (
 								<tr aria-selected="false" className="slds-hint-parent">
-									{Object.keys(record).map((key) => (
+									{Object.keys(record).map((key, index) => (
 										<GridCell
 											highlights={highlights}
 											cellKey={key}
-											cellValue={record[key]}></GridCell>
+											onRecordUpdated={onRecordUpdated}
+											field={fields[index]}
+											record={record}></GridCell>
 									))}
 								</tr>
 							))}

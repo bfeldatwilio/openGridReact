@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import FieldSelectItem from "./fieldSelectItem";
+import { FIELDTYPES } from "../../utils/constants";
 
 export default function FieldAddCmp({ onSelectionChange, fields, activeFields, sr }) {
 	const [filteredFields, setFilteredFields] = useState([]);
@@ -35,6 +36,11 @@ export default function FieldAddCmp({ onSelectionChange, fields, activeFields, s
 	};
 
 	const addFieldToSelectedFields = (addedField) => {
+		if (addedField.type === FIELDTYPES.PICKLIST.value) {
+			addedField.picklistValueLabels = addedField.picklistValues.map(
+				(picklistItem) => picklistItem.label
+			);
+		}
 		let fields = [...activeFields, addedField];
 		onSelectionChange(fields);
 	};

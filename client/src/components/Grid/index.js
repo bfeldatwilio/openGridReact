@@ -52,7 +52,7 @@ export default function Grid() {
 	};
 	//TODO add empty nodes
 	const formData = (data) => {
-		let formed = data.edges.map((edge) => {
+		let formed = data.edges.map((edge, index) => {
 			let node = edge.node;
 			let flattenedNode = flattenObj(node);
 			return flattenedNode;
@@ -86,6 +86,7 @@ export default function Grid() {
 		let gridObject = localStorage.getItem(storageLocation);
 		if (gridObject) {
 			let gridObjectJSON = JSON.parse(gridObject);
+			console.log(gridObjectJSON);
 			let { object, fields, filters, highlights } = gridObjectJSON;
 			setActiveObject(object);
 			setLoadedFields(fields);
@@ -138,8 +139,6 @@ export default function Grid() {
 		} else {
 			filterQueryStr = filterQueryStr += ")";
 		}
-		// TODO ending ) above closes out the modifiers.  Gotta get the orderBy in there by
-		// grabbing the sorted field and adding it's data in before closing it out
 		fields.forEach((field) => {
 			if (field.referencedFromName) {
 				if (field.type === "id") {
@@ -166,7 +165,7 @@ export default function Grid() {
 				  }
 				}
 			  }
-			}
+			}	
 		  }`;
 		console.log(graph);
 		return graph;
@@ -179,6 +178,14 @@ export default function Grid() {
 
 	const columnFieldChangeHandler = (fields) => {
 		setActiveFields(fields);
+	};
+
+	const recordUpdatedHandler = async (record) => {
+		console.log(record);
+		// ajaxCall(sr, "PATCH", agreement.attributes.url, record).then((data) => {
+		// 	setDefaultState();
+		// 	LoadComponentData();
+		// });
 	};
 
 	const populateSignedRequest = () => {
@@ -250,6 +257,7 @@ export default function Grid() {
 						highlights={activeHighlights}
 						fields={activeFields}
 						onColumnFieldChanged={columnFieldChangeHandler}
+						onRecordUpdated={recordUpdatedHandler}
 						data={gridData}></GridTable>
 				</div>
 			</div>

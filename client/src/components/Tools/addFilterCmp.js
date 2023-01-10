@@ -1,20 +1,13 @@
 import React, { useState } from "react";
 import Dropdown from "./dropdown";
-import FieldFilterCmp from "./fieldFilterCmp";
+import { FIELDTYPES } from "../../utils/constants";
+
 const OPERATORS = [
 	{ label: "Equal to", value: "eq" },
 	{ label: "Not Equal to", value: "ne" },
 	{ label: "Greater Than or Equal", value: "gte" },
 	{ label: "Less Than or Equal", value: "lte" },
 ];
-const FIELDTYPES = {
-	STRING: { value: "string", inputType: "text" },
-	DATE: { value: "date", inputType: "date" },
-	PERCENT: { value: "percent", inputType: "text" },
-	PICKLIST: { value: "picklist", inputType: "text" },
-	CURRENCY: { value: "currency", inputType: "number" },
-	INT: { value: "int", inputType: "number" },
-};
 export default function AddFilterCmp({ fields, onFilterSet }) {
 	const [filterField, setFilterField] = useState();
 	const [filterOperator, setFilterOperator] = useState(OPERATORS[0]);
@@ -54,12 +47,6 @@ export default function AddFilterCmp({ fields, onFilterSet }) {
 		} else {
 			fieldObject = fields.find((fieldObj) => fieldObj.label === fieldLabel);
 		}
-		if (fieldObject.type === FIELDTYPES.PICKLIST.value) {
-			fieldObject.picklistValueLabels = fieldObject.picklistValues.map(
-				(picklistItem) => picklistItem.label
-			);
-		}
-		console.log(fieldObject);
 		setFilterField(fieldObject);
 		setFieldType(FIELDTYPES[fieldObject.type.toUpperCase()]);
 	};
