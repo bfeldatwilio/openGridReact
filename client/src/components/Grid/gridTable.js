@@ -1,6 +1,7 @@
-import React, { useEffect } from "react";
-import GridCell from "./gridCell";
+import React, { useEffect, useState } from "react";
 import GridColumn from "./GridColumn";
+import GridRow from "./gridRow";
+import "./gridTable.css";
 
 export default function GridTable({
 	data,
@@ -8,11 +9,14 @@ export default function GridTable({
 	highlights,
 	onColumnFieldChanged,
 	onRecordUpdated,
+	onRowSelectionChange,
 }) {
-	// useEffect(() => {
-	// 	console.log(fields);
-	// 	console.log(data);
-	// }, [data]);
+	const [rowsSelected, setRowsSelected] = useState([]);
+
+	useEffect(() => {
+		onRowSelectionChange(rowsSelected);
+	}, [rowsSelected]);
+
 	const updateColumnDataHandler = (fieldColumn) => {
 		let updatedFields = fields.map((field) => {
 			let fieldIdentifier = fieldColumn.referencedFromName ? "referencedFromName" : "name";
@@ -27,6 +31,14 @@ export default function GridTable({
 		onColumnFieldChanged(updatedFields);
 	};
 
+	const rowSelectChangeHandler = (selectEvent) => {
+		if (selectEvent.added) {
+			setRowsSelected([selectEvent.record, ...rowsSelected]);
+		} else {
+			setRowsSelected(rowsSelected.filter((record) => record.Id !== selectEvent.record.Id));
+		}
+	};
+
 	return (
 		<div>
 			{data && (
@@ -37,6 +49,9 @@ export default function GridTable({
 					aria-label="Example advanced table of Opportunities in actionable mode with ascending column sorting">
 					<thead>
 						<tr className="slds-line-height_reset">
+							<th
+								className="slds-text-align_right slds-cell_action-mode smallColumn"
+								scope="col"></th>
 							{fields.map((field) => (
 								<GridColumn
 									field={field}
@@ -47,16 +62,13 @@ export default function GridTable({
 					<tbody>
 						{data &&
 							data.map((record) => (
-								<tr aria-selected="false" className="slds-hint-parent">
-									{Object.keys(record).map((key, index) => (
-										<GridCell
-											highlights={highlights}
-											cellKey={key}
-											onRecordUpdated={onRecordUpdated}
-											field={fields[index]}
-											record={record}></GridCell>
-									))}
-								</tr>
+								<GridRow
+									record={record}
+									fields={fields}
+									highlights={highlights}
+									onRowSelectChange={rowSelectChangeHandler}
+									onRecordUpdated={onRecordUpdated}
+									selectedRows={rowsSelected}></GridRow>
 							))}
 					</tbody>
 				</table>

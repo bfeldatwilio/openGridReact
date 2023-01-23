@@ -7,6 +7,8 @@ export default function GridCell({ cellKey, record, highlights, field, onRecordU
 	const [editEnabled, setEditEnabled] = useState(false);
 	const [updatedValue, setUpdatedValue] = useState();
 
+	const numberTypes = ["currency", "percent", "double", "int"];
+
 	useEffect(() => {
 		let myHighlights = highlights.filter((highlight) => {
 			let referenceProp = field.referencedFromName
@@ -30,14 +32,14 @@ export default function GridCell({ cellKey, record, highlights, field, onRecordU
 
 	const calculateHighlight = (highlight) => {
 		let operatorStr = "";
-		if (highlight.value.includes(" ")) {
-			operatorStr = `"${record[cellKey]}" ${highlight.operatorValue} "${highlight.value}"`;
+		if (numberTypes.includes(highlight.fieldType)) {
+			operatorStr = `${record[cellKey]} ${highlight.operatorValue} ${highlight.value}`;
 		} else if (highlight.fieldType === "date") {
 			let cellDate = Date.parse(record[cellKey]);
 			let highlightDate = Date.parse(highlight.value);
 			operatorStr = `${cellDate} ${highlight.operatorValue} ${highlightDate}`;
 		} else {
-			operatorStr = `${record[cellKey]} ${highlight.operatorValue} ${highlight.value}`;
+			operatorStr = `"${record[cellKey]}" ${highlight.operatorValue} "${highlight.value}"`;
 		}
 		return eval(operatorStr);
 	};
@@ -48,7 +50,6 @@ export default function GridCell({ cellKey, record, highlights, field, onRecordU
 			patchObj: {},
 		};
 		recordUpdateObj.patchObj[cellKey] = updatedValue;
-		console.log(recordUpdateObj);
 		onRecordUpdated(recordUpdateObj);
 		setEditEnabled(false);
 	};

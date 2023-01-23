@@ -8,3 +8,7 @@
 .toolsContainer > div {
 	margin: 0 5px;
 }
+
+.divider {
+	border-left: solid silver 2px;
+}

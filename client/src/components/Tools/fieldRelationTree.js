@@ -13,6 +13,7 @@ export default function FieldRelationTree({
 }) {
 	const [relatedFields, setRelatedFields] = useState();
 	const [popoverVisible, setPopoverVisible] = useState(false);
+	const [loading, setLoading] = useState(false);
 
 	const buttonClickHandler = () => {
 		setPopoverVisible(!popoverVisible);
@@ -23,9 +24,11 @@ export default function FieldRelationTree({
 
 	// TODO Got the name to match but it's matching for all related objects
 	const fetchObject = async () => {
+		setLoading(true);
 		let query = `${sr.client.instanceUrl}${sr.context.links.sobjectUrl}${relationship}/describe`;
 		let res = await ajaxCallGET(sr, query);
 		setRelatedFields(res.fields);
+		setLoading(false);
 	};
 	return (
 		<div className="fieldRelationshipTreeContainer">
@@ -38,6 +41,19 @@ export default function FieldRelationTree({
 					aria-describedby="popover-body-id"
 					className="slds-popover slds-nubbin_left popoverContainer"
 					role="dialog">
+					{loading && (
+						<div class="loadingContainer">
+							<div class="slds-spinner_container">
+								<div
+									role="status"
+									class="slds-spinner slds-spinner_medium slds-spinner_brand">
+									<span class="slds-assistive-text">Loading</span>
+									<div class="slds-spinner__dot-a"></div>
+									<div class="slds-spinner__dot-b"></div>
+								</div>
+							</div>
+						</div>
+					)}
 					<button
 						onClick={() => setPopoverVisible(false)}
 						className="slds-button slds-button_icon slds-button_icon slds-button_icon-small slds-float_right slds-popover__close"

@@ -16,6 +16,7 @@ export default function Grid() {
 	const [activeFields, setActiveFields] = useState([]);
 	const [activeFilters, setActiveFilters] = useState([]);
 	const [activeHighlights, setActiveHighlights] = useState([]);
+	const [selectedRows, setSelectedRows] = useState([]);
 	const [activeObject, setActiveObject] = useState();
 	const [gridData, setGridData] = useState();
 	const [errorMessage, setErrorMessage] = useState();
@@ -266,6 +267,7 @@ export default function Grid() {
 						loadedFields={loadedFields}
 						filters={activeFilters}
 						highlights={activeHighlights}
+						selectedRows={selectedRows}
 						onFilterChanged={(filters) => setActiveFilters(filters)}
 						sr={sr}
 					/>
@@ -276,6 +278,7 @@ export default function Grid() {
 						fields={activeFields}
 						onColumnFieldChanged={columnFieldChangeHandler}
 						onRecordUpdated={recordUpdatedHandler}
+						onRowSelectionChange={(rows) => setSelectedRows(rows)}
 						data={gridData}></GridTable>
 				</div>
 			</div>

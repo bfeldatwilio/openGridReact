@@ -51,6 +51,7 @@ export default function AddHighlightCmp({ fields, onHighlightSet }) {
 		} else {
 			fieldObject = fields.find((fieldObj) => fieldObj.label === fieldLabel);
 		}
+		console.log(fieldObject);
 		setHighlightField(fieldObject);
 		setFieldType(FIELDTYPES[fieldObject.type.toUpperCase()]);
 	};

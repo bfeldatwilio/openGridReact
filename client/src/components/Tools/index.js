@@ -5,6 +5,7 @@ import FieldAddCmp from "./fieldAddCmp";
 import "./tools.css";
 import FieldFilterCmp from "./fieldFilterCmp";
 import FieldHighlightCmp from "./fieldHighlightCmp";
+import BulkEditCmp from "./bulkEditCmp";
 
 const OBJECTSEARCHURL = "/services/apexrest/entityDefinitions/";
 
@@ -18,6 +19,7 @@ export default function Tools({
 	onObjectSaved,
 	onFilterChanged,
 	onHighlightChanged,
+	selectedRows,
 }) {
 	const [sourceObj, setSourceObj] = useState();
 	const [objectFields, setObjectFields] = useState([]);
@@ -26,11 +28,13 @@ export default function Tools({
 	const [fieldModalVisible, setFieldModalVisible] = useState(false);
 	const [filterModalVisible, setFilterModalVisible] = useState(false);
 	const [highlightModalVisible, setHighlightModalVisible] = useState(false);
+	const [bulkEditModalVisible, setBulkEditModalVisible] = useState(false);
 
 	const [disableFieldSelect, setDisableFieldSelect] = useState(true);
 	const [disableFieldFilter, setDisableFieldFilter] = useState(true);
 	const [disableComputed, setDisableComputed] = useState(true);
 	const [disableHighlight, setDisableHighlight] = useState(true);
+	const [disableBulkEdit, setDisableBulkEdit] = useState(true);
 
 	//input states: unfocused, focused, empty, typing, searching, results
 
@@ -56,6 +60,11 @@ export default function Tools({
 		}
 	}, [selectedFields]);
 
+	useEffect(() => {
+		let noRowsSelected = selectedRows.length === 0;
+		setDisableBulkEdit(noRowsSelected);
+	}, [selectedRows]);
+
 	const fetchObjectDescribe = async (sourceObj) => {
 		let query = `${sr.client.instanceUrl}${sr.context.links.sobjectUrl}${sourceObj.QualifiedApiName}/describe`;
 		let res = await ajaxCallGET(sr, query);
@@ -80,43 +89,36 @@ export default function Tools({
 		onFieldsSaved(gridFields);
 	};
 
-	const fieldToolClickHandler = () => {
-		setFieldModalVisible(true);
-	};
-
-	const filterToolClickHandler = () => {
-		setFilterModalVisible(true);
+	const bulkEditSaveHandler = (edits) => {
+		console.log(edits);
 	};
 
 	const computedToolClickHandler = () => {
 		console.log("computed clicked");
 	};
 
-	const highlightToolClickHandler = () => {
-		setHighlightModalVisible(true);
-	};
-
-	const objectSelectedHandler = (object) => {
-		onObjectSaved(object);
-	};
-
-	const selectedFieldChangeHandler = (fields) => {
-		setSelectedFields(fields);
-	};
-
 	return (
 		<section className="toolsContainer">
+			<div>
+				<button
+					onClick={() => setBulkEditModalVisible(true)}
+					disabled={disableBulkEdit}
+					className="slds-button slds-button_neutral">
+					Bulk Edit
+				</button>
+			</div>
+			<div className="divider"></div>
 			<div>
 				<ObjectAddCmp
 					placeholder="Set Object"
 					activeObject={sourceObj}
 					searchurl={OBJECTSEARCHURL}
 					sr={sr}
-					onItemChosen={objectSelectedHandler}></ObjectAddCmp>
+					onItemChosen={onObjectSaved}></ObjectAddCmp>
 			</div>
 			<div>
 				<button
-					onClick={fieldToolClickHandler}
+					onClick={() => setFieldModalVisible(true)}
 					disabled={disableFieldSelect}
 					className="slds-button slds-button_neutral">
 					Fields ({selectedFields.length})
@@ -124,7 +126,7 @@ export default function Tools({
 			</div>
 			<div>
 				<button
-					onClick={filterToolClickHandler}
+					onClick={() => setFilterModalVisible(true)}
 					disabled={disableFieldFilter}
 					className="slds-button slds-button_neutral">
 					Filter ({filters.length})
@@ -140,7 +142,7 @@ export default function Tools({
 			</div>
 			<div>
 				<button
-					onClick={highlightToolClickHandler}
+					onClick={() => setHighlightModalVisible(true)}
 					disabled={disableHighlight}
 					className="slds-button slds-button_neutral">
 					Highlight ({highlights.length})
@@ -177,7 +179,7 @@ export default function Tools({
 								id="modal-content-id-1">
 								<FieldAddCmp
 									sr={sr}
-									onSelectionChange={selectedFieldChangeHandler}
+									onSelectionChange={setSelectedFields}
 									activeFields={selectedFields}
 									fields={objectFields}></FieldAddCmp>
 							</div>
@@ -212,6 +214,13 @@ export default function Tools({
 					activeFields={selectedFields}
 					highlights={highlights}
 					onCancel={() => setHighlightModalVisible(false)}></FieldHighlightCmp>
+			)}
+			{bulkEditModalVisible && (
+				<BulkEditCmp
+					onBulkEditSaved={bulkEditSaveHandler}
+					onCancel={() => setBulkEditModalVisible(false)}
+					fields={selectedFields}
+					selectedRows={selectedRows}></BulkEditCmp>
 			)}
 		</section>
 	);

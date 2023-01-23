@@ -6,9 +6,12 @@
 .popoverContainer {
 	position: absolute;
 	top: -80px;
+	min-height: 100px;
 }
 
 .relatedFieldPopoverBody {
-	max-height: 200px;
+	max-height: 250px;
 	overflow: scroll;
+	overflow-x: hidden;
+	overflow-y: scroll;
 }
