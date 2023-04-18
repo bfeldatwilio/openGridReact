@@ -16,6 +16,10 @@ export default function GridRow({
 		setChecked(IAmSelected);
 	}, [selectedRows]);
 
+	useEffect(() => {
+		setChecked(false);
+	}, [record]);
+
 	const rowSelectChangeHandler = (e) => {
 		let isChecked = e.target.checked;
 		let rowChangeObject = {

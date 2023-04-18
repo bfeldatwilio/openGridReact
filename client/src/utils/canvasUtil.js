@@ -90,11 +90,7 @@ const ajaxCallCollectionPromise = async (sr, body) => {
 // https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/resources_composite_composite.htm
 
 const ajaxCallCompositePromise = async (sr, body) => {
-	const compositeUrl =
-		sr.client.instanceUrl +
-		"/services/data/v" +
-		sr.context.environment.version.api +
-		"/composite";
+	const compositeUrl = sr.client.instanceUrl + sr.context.links.restUrl + "/composite";
 	let promise = await new Promise((resolve, reject) => {
 		global.Sfdc.canvas.client.ajax(compositeUrl, {
 			client: sr.client,

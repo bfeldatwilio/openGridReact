@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ajaxCallGET } from "../../utils/canvasUtil";
+import { ajaxCallGET, ajaxCall } from "../../utils/canvasUtil";
 import ObjectAddCmp from "./objectAddCmp";
 import FieldAddCmp from "./fieldAddCmp";
 import "./tools.css";
@@ -19,6 +19,7 @@ export default function Tools({
 	onObjectSaved,
 	onFilterChanged,
 	onHighlightChanged,
+	onBulkEditSaved,
 	selectedRows,
 }) {
 	const [sourceObj, setSourceObj] = useState();
@@ -89,8 +90,21 @@ export default function Tools({
 		onFieldsSaved(gridFields);
 	};
 
-	const bulkEditSaveHandler = (edits) => {
-		console.log(edits);
+	const bulkEditSaveClickHandler = async (editObj) => {
+		let updateObj = {
+			allOrNone: false,
+			records: [],
+		};
+		editObj.records.forEach((record) => {
+			let recordUpdateObj = {
+				attributes: { type: sourceObj.QualifiedApiName },
+				id: record.Id,
+			};
+			recordUpdateObj[editObj.field.name] = editObj.newValue;
+			updateObj.records.push(recordUpdateObj);
+		});
+		onBulkEditSaved(updateObj);
+		setBulkEditModalVisible();
 	};
 
 	const computedToolClickHandler = () => {
@@ -217,7 +231,7 @@ export default function Tools({
 			)}
 			{bulkEditModalVisible && (
 				<BulkEditCmp
-					onBulkEditSaved={bulkEditSaveHandler}
+					onBulkEditSaved={bulkEditSaveClickHandler}
 					onCancel={() => setBulkEditModalVisible(false)}
 					fields={selectedFields}
 					selectedRows={selectedRows}></BulkEditCmp>

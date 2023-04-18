@@ -90,6 +90,7 @@ export default function Grid() {
 		let gridObject = localStorage.getItem(storageLocation);
 		if (gridObject) {
 			let gridObjectJSON = JSON.parse(gridObject);
+			console.log(gridObjectJSON);
 			let { object, fields, filters, highlights } = gridObjectJSON;
 			setActiveObject(object);
 			setLoadedFields(fields);
@@ -183,10 +184,23 @@ export default function Grid() {
 		setActiveFields(fields);
 	};
 
-	const recordUpdatedHandler = async (recordUpdateObj) => {
+	const recordUpdatedHandler = (recordUpdateObj) => {
 		setLoading(true);
 		const url = `${sr.client.instanceUrl}${sr.context.links.sobjectUrl}${activeObject.QualifiedApiName}/${recordUpdateObj.Id}`;
 		ajaxCall(sr, "PATCH", url, recordUpdateObj.patchObj)
+			.then((res) => {
+				fetchGridData(activeObject, activeFields, activeFilters);
+			})
+			.catch((e) => {
+				setLoading(false);
+				handleError(e);
+			});
+	};
+
+	const bulkEditSaveHandler = async (updateObj) => {
+		setLoading(true);
+		const query = `${sr.client.instanceUrl}${sr.context.links.restUrl}composite/sobjects`;
+		ajaxCall(sr, "PATCH", query, updateObj)
 			.then((res) => {
 				fetchGridData(activeObject, activeFields, activeFilters);
 			})
@@ -268,6 +282,7 @@ export default function Grid() {
 						filters={activeFilters}
 						highlights={activeHighlights}
 						selectedRows={selectedRows}
+						onBulkEditSaved={bulkEditSaveHandler}
 						onFilterChanged={(filters) => setActiveFilters(filters)}
 						sr={sr}
 					/>

@@ -7,6 +7,7 @@ export const FIELDTYPES = {
 	INT: { value: "int", inputType: "number" },
 	DOUBLE: { value: "double", inputType: "number" },
 	BOOLEAN: { value: "boolean", inputType: "checkbox" },
+	TEXTAREA: { value: "textarea", inputType: "textarea" },
 };
 
 export const GRIDCOLUMNTYPE = ["NATIVE", "REFERENCE"];
