@@ -104,7 +104,7 @@ export default function Tools({
 			updateObj.records.push(recordUpdateObj);
 		});
 		onBulkEditSaved(updateObj);
-		setBulkEditModalVisible();
+		setBulkEditModalVisible(false);
 	};
 
 	const computedToolClickHandler = () => {
@@ -146,14 +146,14 @@ export default function Tools({
 					Filter ({filters.length})
 				</button>
 			</div>
-			<div>
+			{/* <div>
 				<button
 					onClick={computedToolClickHandler}
 					disabled={disableComputed}
 					className="slds-button slds-button_neutral">
 					Computed Field
 				</button>
-			</div>
+			</div> */}
 			<div>
 				<button
 					onClick={() => setHighlightModalVisible(true)}
@@ -164,6 +164,7 @@ export default function Tools({
 			</div>
 			{fieldModalVisible && (
 				<>
+					{/* TODO refactor below into a component like the rest of them */}
 					<section
 						role="dialog"
 						tabindex="-1"

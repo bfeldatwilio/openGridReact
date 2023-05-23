@@ -2,7 +2,14 @@ import React, { useEffect, useState } from "react";
 import Dropdown from "../Tools/dropdown";
 import "./gridCell.css";
 
-export default function GridCell({ cellKey, record, highlights, field, onRecordUpdated }) {
+export default function GridCell({
+	cellKey,
+	record,
+	highlights,
+	field,
+	disableInlineEdit,
+	onRecordUpdated,
+}) {
 	const [cellClass, setCellClass] = useState();
 	const [editEnabled, setEditEnabled] = useState(false);
 	const [updatedValue, setUpdatedValue] = useState();
@@ -63,6 +70,7 @@ export default function GridCell({ cellKey, record, highlights, field, onRecordU
 				<button
 					className="slds-button slds-button_icon slds-cell-edit__button slds-m-left_x-small"
 					tabindex="-1"
+					disabled={disableInlineEdit}
 					onClick={() => setEditEnabled(true)}
 					title={`Edit ${record[cellKey]}`}>
 					<svg

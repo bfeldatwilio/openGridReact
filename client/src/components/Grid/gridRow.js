@@ -5,6 +5,7 @@ export default function GridRow({
 	record,
 	fields,
 	highlights,
+	disableUpdating,
 	onRecordUpdated,
 	onRowSelectChange,
 	selectedRows,
@@ -35,6 +36,7 @@ export default function GridRow({
 				<div className="slds-checkbox">
 					<input
 						type="checkbox"
+						disabled={disableUpdating}
 						name="rowSelections"
 						id={`${record.Id}_chk`}
 						onChange={rowSelectChangeHandler}
@@ -54,6 +56,7 @@ export default function GridRow({
 			{Object.keys(record).map((key, index) => (
 				<GridCell
 					highlights={highlights}
+					disableInlineEdit={disableUpdating}
 					cellKey={key}
 					onRecordUpdated={onRecordUpdated}
 					field={fields[index]}

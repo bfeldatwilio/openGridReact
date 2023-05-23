@@ -210,6 +210,11 @@ export default function Grid() {
 			});
 	};
 
+	const fieldsSetHandler = (fields) => {
+		console.log(fields);
+		setActiveFields(fields);
+	};
+
 	const handleError = (error) => {
 		let message = error[0].message;
 		console.log(message);
@@ -274,7 +279,7 @@ export default function Grid() {
 				)}
 				{sr && (
 					<Tools
-						onFieldsSaved={setActiveFields}
+						onFieldsSaved={(fields) => fieldsSetHandler(fields)}
 						onHighlightChanged={(highlights) => setActiveHighlights(highlights)}
 						onObjectSaved={setActiveObject}
 						activeObject={activeObject}

@@ -12,6 +12,11 @@ export default function GridTable({
 	onRowSelectionChange,
 }) {
 	const [rowsSelected, setRowsSelected] = useState([]);
+	const [disableUpdating, setDisableUpdating] = useState(false);
+
+	useEffect(() => {
+		setDisableUpdating(!idFieldLoaded());
+	}, [fields]);
 
 	useEffect(() => {
 		onRowSelectionChange(rowsSelected);
@@ -37,6 +42,10 @@ export default function GridTable({
 		} else {
 			setRowsSelected(rowsSelected.filter((record) => record.Id !== selectEvent.record.Id));
 		}
+	};
+
+	const idFieldLoaded = () => {
+		return fields.some((field) => field.type === "id");
 	};
 
 	return (
@@ -66,6 +75,7 @@ export default function GridTable({
 									record={record}
 									fields={fields}
 									highlights={highlights}
+									disableUpdating={disableUpdating}
 									onRowSelectChange={rowSelectChangeHandler}
 									onRecordUpdated={onRecordUpdated}
 									selectedRows={rowsSelected}></GridRow>
