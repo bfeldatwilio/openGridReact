@@ -1,0 +1,11 @@
+<aura:component implements="flexipage:availableForAllPageTypes">
+	<article class="slds-card">
+		<force:canvasApp
+			developerName="Open_Grid"
+			namespacePrefix=""
+			onCanvasAppLoad="{!c.onCanvasLoad}"
+			onCanvasSubscribed="{!c.onCanvasSubscribed}"
+			width="100%"
+		/>
+	</article>
+</aura:component>
