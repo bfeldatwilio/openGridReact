@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import GridColumn from "./GridColumn";
+import GridColumn from "./gridColumn";
 import GridRow from "./gridRow";
 import "./gridTable.css";
 
