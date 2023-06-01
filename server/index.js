@@ -2,10 +2,13 @@ const express = require("express");
 const path = require("path");
 
 const PORT = process.env.PORT || 3000;
-
+const cors = require("cors");
 const app = express();
-
 app.use(express.static(path.resolve(__dirname, "../client/build")));
+app.use(cors());
+app.use(express.json());
+
+const API_KEY = "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";
 
 app.get("/api", (req, res) => {
 	res.json({ message: "response from the server" });
@@ -13,6 +16,28 @@ app.get("/api", (req, res) => {
 
 app.post("/sign", (req, res) => {
 	res.sendFile(path.resolve(__dirname, "../client/build", "index.html"));
+});
+
+app.post("/completions", async (req, res) => {
+	const options = {
+		method: "POST",
+		headers: {
+			Authorization: `Bearer ${API_KEY}`,
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify({
+			model: "gpt-3.5-turbo",
+			messages: [{ role: "user", content: req.body.message }],
+			max_tokens: 100,
+		}),
+	};
+	try {
+		const response = await fetch("https://api.openai.com/v1/chat/completions", options);
+		const data = await response.json();
+		res.send(data);
+	} catch (error) {
+		console.error(error);
+	}
 });
 
 app.listen(PORT, () => {

@@ -7,10 +7,6 @@ export default function BulkEditCmp({ onBulkEditSaved, selectedRows, onCancel, f
 	const [field, setField] = useState();
 	const [newValue, setNewValue] = useState();
 
-	useEffect(() => {
-		console.log(selectedRows);
-	}, []);
-
 	const bulkEditSaveHandler = () => {
 		let bulkEditSaveObj = {
 			field: field,

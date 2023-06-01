@@ -64,14 +64,14 @@ export default function ObjectAddCmp({ placeholder, activeObject, sr, onItemChos
 									/>
 									<button
 										onClick={() => setInSearchMode(false)}
-										class="slds-button slds-button_icon slds-input__icon slds-input__icon_right"
+										className="slds-button slds-button_icon slds-input__icon slds-input__icon_right"
 										title="Clear">
 										<svg
-											class="slds-button__icon slds-icon-text-light"
+											className="slds-button__icon slds-icon-text-light"
 											aria-hidden="true">
 											<use xlinkHref="/assets/icons/utility-sprite/svg/symbols.svg#clear"></use>
 										</svg>
-										<span class="slds-assistive-text">Clear</span>
+										<span className="slds-assistive-text">Clear</span>
 									</button>
 								</div>
 								<div

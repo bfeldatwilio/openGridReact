@@ -52,10 +52,10 @@ export default function FieldAddCmp({ onSelectionChange, fields, activeFields, s
 
 	return (
 		<div>
-			<div class="slds-form-element">
-				<div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left">
+			<div className="slds-form-element">
+				<div className="slds-form-element__control slds-input-has-icon slds-input-has-icon_left">
 					<svg
-						class="slds-icon slds-input__icon slds-input__icon_left slds-icon-text-default"
+						className="slds-icon slds-input__icon slds-input__icon_left slds-icon-text-default"
 						aria-hidden="true">
 						<use xlinkHref="/assets/icons/utility-sprite/svg/symbols.svg#search"></use>
 					</svg>
@@ -63,7 +63,7 @@ export default function FieldAddCmp({ onSelectionChange, fields, activeFields, s
 						type="text"
 						id="text-input-id-92"
 						placeholder="Search Fields"
-						class="slds-input"
+						className="slds-input"
 						onChange={fieldFilterChangeHandler}
 					/>
 				</div>

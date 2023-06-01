@@ -130,7 +130,7 @@ export default function AddFilterCmp({ fields, onFilterSet }) {
 									<button
 										disabled={!(filterField && filterOperator && filterValue)}
 										onClick={addFilterClickHandler}
-										class="slds-button slds-button_brand">
+										className="slds-button slds-button_brand">
 										Add Filter
 									</button>
 								</div>

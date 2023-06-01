@@ -235,27 +235,27 @@ export default function Grid() {
 	};
 
 	return (
-		<article class="slds-card">
+		<article className="slds-card">
 			{showToast && (
 				<Toast onCloseToast={() => setShowToast(false)} message={errorMessage}></Toast>
 			)}
-			<div class="slds-card__header slds-grid">
-				<header class="slds-media slds-media_center slds-has-flexi-truncate">
-					<div class="slds-media__figure">
+			<div className="slds-card__header slds-grid">
+				<header className="slds-media slds-media_center slds-has-flexi-truncate">
+					<div className="slds-media__figure">
 						<span
-							class="slds-icon_container slds-icon-standard-account"
+							className="slds-icon_container slds-icon-standard-account"
 							title="account">
-							<svg class="slds-icon slds-icon_small" aria-hidden="true">
+							<svg className="slds-icon slds-icon_small" aria-hidden="true">
 								<use xlinkHref="/assets/icons/standard-sprite/svg/symbols.svg#channel_programs"></use>
 							</svg>
-							<span class="slds-assistive-text">Open Grid</span>
+							<span className="slds-assistive-text">Open Grid</span>
 						</span>
 					</div>
-					<div class="slds-media__body">
-						<h2 class="slds-card__header-title">
+					<div className="slds-media__body">
+						<h2 className="slds-card__header-title">
 							<a
 								href="#"
-								class="slds-card__header-link slds-truncate"
+								className="slds-card__header-link slds-truncate"
 								title="Accounts">
 								<span>Open Grid</span>
 							</a>
@@ -263,16 +263,16 @@ export default function Grid() {
 					</div>
 				</header>
 			</div>
-			<div class="slds-card__body slds-card__body_inner">
+			<div className="slds-card__body slds-card__body_inner">
 				{loading && (
-					<div class="loadingContainer">
-						<div class="slds-spinner_container">
+					<div className="loadingContainer">
+						<div className="slds-spinner_container">
 							<div
 								role="status"
-								class="slds-spinner slds-spinner_medium slds-spinner_brand">
-								<span class="slds-assistive-text">Loading</span>
-								<div class="slds-spinner__dot-a"></div>
-								<div class="slds-spinner__dot-b"></div>
+								className="slds-spinner slds-spinner_medium slds-spinner_brand">
+								<span className="slds-assistive-text">Loading</span>
+								<div className="slds-spinner__dot-a"></div>
+								<div className="slds-spinner__dot-b"></div>
 							</div>
 						</div>
 					</div>

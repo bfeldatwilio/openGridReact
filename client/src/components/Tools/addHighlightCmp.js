@@ -157,7 +157,7 @@ export default function AddHighlightCmp({ fields, onHighlightSet }) {
 											)
 										}
 										onClick={addHighlightClickHandler}
-										class="slds-button slds-button_brand">
+										className="slds-button slds-button_brand">
 										Add Highlight
 									</button>
 								</div>

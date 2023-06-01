@@ -42,14 +42,14 @@ export default function FieldRelationTree({
 					className="slds-popover slds-nubbin_left popoverContainer"
 					role="dialog">
 					{loading && (
-						<div class="loadingContainer">
-							<div class="slds-spinner_container">
+						<div className="loadingContainer">
+							<div className="slds-spinner_container">
 								<div
 									role="status"
-									class="slds-spinner slds-spinner_medium slds-spinner_brand">
-									<span class="slds-assistive-text">Loading</span>
-									<div class="slds-spinner__dot-a"></div>
-									<div class="slds-spinner__dot-b"></div>
+									className="slds-spinner slds-spinner_medium slds-spinner_brand">
+									<span className="slds-assistive-text">Loading</span>
+									<div className="slds-spinner__dot-a"></div>
+									<div className="slds-spinner__dot-b"></div>
 								</div>
 							</div>
 						</div>

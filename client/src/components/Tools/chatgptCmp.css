@@ -1,0 +1,8 @@
+.main {
+	width: 100%;
+	min-height: 30vh;
+}
+
+section.slds-chat {
+	overflow-y: scroll;
+}

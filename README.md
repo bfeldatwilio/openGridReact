@@ -26,7 +26,7 @@ This project does not have proper error handling or full unit testing, and is cu
 4: Scroll to the bottom and enable `Canvas`. Enter `http://localhost:3000/sign` for the Canvas App URL. Make sure the access method is `Signed Request(POST)`. Under `Locations`, add `Lightning Component`  
 5: Hit `save`
 6: Click back into the "View" of the connected app and click Manage
-7: Under OAuth Policies, "Admin approved users are pre-authorized" is selected
+7: Under OAuth Policies, "Admin approved users are pre-authorized" is selected, and choose Relax IP Restriction so localhost works.
 8: Under Profiles, add the profiles that can use the connected app
 
 #### Create and Deploy the Canvas App

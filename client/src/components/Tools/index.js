@@ -4,6 +4,7 @@ import ObjectAddCmp from "./objectAddCmp";
 import FieldAddCmp from "./fieldAddCmp";
 import "./tools.css";
 import FieldFilterCmp from "./fieldFilterCmp";
+import ChatgptCmp from "./chatgptCmp";
 import FieldHighlightCmp from "./fieldHighlightCmp";
 import BulkEditCmp from "./bulkEditCmp";
 
@@ -30,6 +31,7 @@ export default function Tools({
 	const [filterModalVisible, setFilterModalVisible] = useState(false);
 	const [highlightModalVisible, setHighlightModalVisible] = useState(false);
 	const [bulkEditModalVisible, setBulkEditModalVisible] = useState(false);
+	const [chatgptModalVisible, setChatgptModalVisible] = useState(false);
 
 	const [disableFieldSelect, setDisableFieldSelect] = useState(true);
 	const [disableFieldFilter, setDisableFieldFilter] = useState(true);
@@ -162,6 +164,13 @@ export default function Tools({
 					Highlight ({highlights.length})
 				</button>
 			</div>
+			<div>
+				<button
+					onClick={() => setChatgptModalVisible(true)}
+					className="slds-button slds-button_neutral">
+					Insights
+				</button>
+			</div>
 			{fieldModalVisible && (
 				<>
 					{/* TODO refactor below into a component like the rest of them */}
@@ -236,6 +245,9 @@ export default function Tools({
 					onCancel={() => setBulkEditModalVisible(false)}
 					fields={selectedFields}
 					selectedRows={selectedRows}></BulkEditCmp>
+			)}
+			{chatgptModalVisible && (
+				<ChatgptCmp onCancel={() => setChatgptModalVisible(false)}></ChatgptCmp>
 			)}
 		</section>
 	);
