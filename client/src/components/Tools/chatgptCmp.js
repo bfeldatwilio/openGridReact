@@ -7,6 +7,7 @@ export default function ChatgptCmp({ onCancel }) {
 	const [currentTitle, setCurrentTitle] = useState(null);
 	const [message, setMessage] = useState(null);
 	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState(null);
 
 	const getMessages = async (e) => {
 		setLoading(true);
@@ -24,7 +25,13 @@ export default function ChatgptCmp({ onCancel }) {
 			// const response = await fetch("http://localhost:3000/completions", options);
 			const response = await fetch("https://open-grid-sf.herokuapp.com/completions", options);
 			const data = await response.json();
-			setMessage(data.choices[0].message);
+			console.log(data);
+			if (data.error) {
+				console.log(data.error.code);
+				setError(data.error.code);
+			} else {
+				setMessage(data.choices[0].message);
+			}
 		} catch (e) {
 			console.error(e);
 		} finally {
@@ -56,7 +63,6 @@ export default function ChatgptCmp({ onCancel }) {
 					content: message.content,
 				},
 			]);
-			setValue("");
 		}
 	}, [message, currentTitle]);
 
@@ -107,6 +113,40 @@ export default function ChatgptCmp({ onCancel }) {
 					</div>
 					<div className="slds-modal__content slds-p-around_medium">
 						<div className="content-container">
+							{error && (
+								<div className="slds-notify_container slds-is-relative">
+									<div
+										className="slds-notify slds-notify_toast slds-theme_error"
+										role="status">
+										<span className="slds-assistive-text">error</span>
+										<span
+											className="slds-icon_container slds-icon-utility-error slds-m-right_small slds-no-flex slds-align-top"
+											title="Description of icon when needed">
+											<svg
+												className="slds-icon slds-icon_small"
+												aria-hidden="true">
+												<use xlinkHref="/assets/icons/utility-sprite/svg/symbols.svg#error"></use>
+											</svg>
+										</span>
+										<div className="slds-notify__content">
+											<h2 className="slds-text-heading_small ">{error}</h2>
+										</div>
+										<div className="slds-notify__close">
+											<button
+												onClick={() => setError(null)}
+												className="slds-button slds-button_icon slds-button_icon-inverse"
+												title="Close">
+												<svg
+													className="slds-button__icon slds-button__icon_large"
+													aria-hidden="true">
+													<use xlinkHref="/assets/icons/utility-sprite/svg/symbols.svg#close"></use>
+												</svg>
+												<span className="slds-assistive-text">Close</span>
+											</button>
+										</div>
+									</div>
+								</div>
+							)}
 							{/* <section className="topics">
 								<button onClick={createNewTopic} className="new-topic">
 									+ New Topic
@@ -150,7 +190,7 @@ export default function ChatgptCmp({ onCancel }) {
 									<svg
 										className="slds-icon slds-input__icon slds-input__icon_left slds-icon-text-default"
 										aria-hidden="true">
-										<use xlinkHref="/assets/icons/utility-sprite/svg/symbols.svg#search"></use>
+										<use xlinkHref="/assets/icons/utility-sprite/svg/symbols.svg#questions_and_answers"></use>
 									</svg>
 									<input
 										className="slds-input"
