@@ -22,8 +22,8 @@ export default function ChatgptCmp({ onCancel }) {
 			},
 		};
 		try {
-			// const response = await fetch("http://localhost:3000/completions", options);
-			const response = await fetch("https://open-grid-sf.herokuapp.com/completions", options);
+			const response = await fetch("http://localhost:3000/completions", options);
+			// const response = await fetch("https://open-grid-sf.herokuapp.com/completions", options);
 			const data = await response.json();
 			console.log(data);
 			if (data.error) {

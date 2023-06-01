@@ -4,11 +4,13 @@ const path = require("path");
 const PORT = process.env.PORT || 3000;
 const cors = require("cors");
 const app = express();
+require("dotenv").config();
+
 app.use(express.static(path.resolve(__dirname, "../client/build")));
 app.use(cors());
 app.use(express.json());
 
-const API_KEY = "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";
+const API_KEY = process.env.API_KEY;
 
 app.get("/api", (req, res) => {
 	res.json({ message: "response from the server" });
@@ -19,6 +21,7 @@ app.post("/sign", (req, res) => {
 });
 
 app.post("/completions", async (req, res) => {
+	console.log(API_KEY);
 	const options = {
 		method: "POST",
 		headers: {
