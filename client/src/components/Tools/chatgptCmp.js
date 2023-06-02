@@ -42,8 +42,8 @@ export default function ChatgptCmp({ onCancel, gridData }) {
 			},
 		};
 		try {
-			const response = await fetch("http://localhost:3000/completions", options);
-			// const response = await fetch("https://open-grid-sf.herokuapp.com/completions", options);
+			// const response = await fetch("http://localhost:3000/completions", options);
+			const response = await fetch("https://open-grid-sf.herokuapp.com/completions", options);
 			const data = await response.json();
 			if (data.error) {
 				console.log(data.error.code);
