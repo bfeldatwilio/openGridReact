@@ -1,8 +1,16 @@
 .main {
 	width: 100%;
-	min-height: 30vh;
+	height: 45vh;
+	position: relative;
 }
 
 section.slds-chat {
-	overflow-y: scroll;
+	position: absolute;
+	bottom: 0;
+	max-height: 100%;
+	width: 100%;
+}
+
+ul.slds-chat-list {
+	padding-bottom: 15px;
 }

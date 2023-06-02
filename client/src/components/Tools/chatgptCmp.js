@@ -3,79 +3,57 @@ import "./chatgptCmp.css";
 
 export default function ChatgptCmp({ onCancel }) {
 	const [value, setValue] = useState("");
-	const [previousChats, setPreviousChats] = useState([]);
-	const [currentTitle, setCurrentTitle] = useState(null);
-	const [message, setMessage] = useState(null);
+	const [previousChats, setPreviousChats] = useState([
+		{ role: "system", content: "You are a helpful assistant." },
+	]);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
 
-	const getMessages = async (e) => {
-		setLoading(true);
+	const listBottom = document.querySelector("#list-bottom");
+
+	useEffect(() => {
+		if (value !== "") {
+			setValue("");
+			getMessages();
+		}
+	}, [previousChats]);
+
+	const addQuestion = (e) => {
 		e.preventDefault();
+		setLoading(true);
+		const newMessage = { role: "user", content: value };
+		setPreviousChats([...previousChats, newMessage]);
+		scrollToBottom();
+	};
+
+	const getMessages = async () => {
+		console.log(previousChats);
 		const options = {
 			method: "POST",
 			body: JSON.stringify({
-				message: value,
+				messages: previousChats,
 			}),
 			headers: {
 				"Content-Type": "application/json",
 			},
 		};
 		try {
-			const response = await fetch("http://localhost:3000/completions", options);
-			// const response = await fetch("https://open-grid-sf.herokuapp.com/completions", options);
+			// const response = await fetch("http://localhost:3000/completions", options);
+			const response = await fetch("https://open-grid-sf.herokuapp.com/completions", options);
 			const data = await response.json();
-			console.log(data);
 			if (data.error) {
 				console.log(data.error.code);
 				setError(data.error.code);
 			} else {
-				setMessage(data.choices[0].message);
+				setPreviousChats([...previousChats, data.choices[0].message]);
 			}
 		} catch (e) {
 			console.error(e);
 		} finally {
 			setLoading(false);
+			scrollToBottom();
 		}
 	};
-
-	const createNewTopic = () => {
-		setMessage(null);
-		setValue("");
-		setCurrentTitle(null);
-	};
-
-	useEffect(() => {
-		if (!currentTitle && value && message) {
-			setCurrentTitle(value);
-		}
-		if (currentTitle && value && message) {
-			setPreviousChats((previousChats) => [
-				...previousChats,
-				{
-					title: currentTitle,
-					role: "user",
-					content: value,
-				},
-				{
-					title: currentTitle,
-					role: message.role,
-					content: message.content,
-				},
-			]);
-		}
-	}, [message, currentTitle]);
-
-	const handleClick = (title) => {
-		setCurrentTitle(title);
-		setMessage(null);
-		setValue("");
-	};
-
-	const currentChat = previousChats.filter((previousChat) => previousChat.title === currentTitle);
-	const uniqueTitles = Array.from(
-		new Set(previousChats.map((previousChat) => previousChat.title))
-	);
 
 	const inboundOrOutboundStyle1 = (role) => {
 		return role === "user" ? "slds-chat-listitem_outbound" : "slds-chat-listitem_inbound";
@@ -86,6 +64,14 @@ export default function ChatgptCmp({ onCancel }) {
 			? "slds-chat-message__text_outbound"
 			: "slds-chat-message__text_inbound";
 	};
+
+	const scrollToBottom = () => {
+		setTimeout(() => {
+			listBottom.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
+		}, 0);
+	};
+
+	const nonSystemMessages = previousChats.filter((message) => message.role !== "system");
 
 	return (
 		<>
@@ -147,28 +133,18 @@ export default function ChatgptCmp({ onCancel }) {
 									</div>
 								</div>
 							)}
-							{/* <section className="topics">
-								<button onClick={createNewTopic} className="new-topic">
-									+ New Topic
-								</button>
-								<ul className="history">
-									{uniqueTitles?.map((uniqueTitle, index) => (
-										<li onClick={() => handleClick(uniqueTitle)} key={index}>
-											{uniqueTitle}
-										</li>
-									))}
-								</ul>
-							</section> */}
 							<section className="main">
 								<section role="log" className="slds-chat">
 									<ul className="slds-chat-list">
-										{currentChat?.map((chatMessage, index) => (
+										{nonSystemMessages?.map((chatMessage, index) => (
 											<li
 												className={`slds-chat-listitem ${inboundOrOutboundStyle1(
 													chatMessage.role
 												)}`}
 												key={index}>
-												<div className="slds-chat-message__body">
+												<div
+													id={`msg_${index}`}
+													className="slds-chat-message__body">
 													<div
 														className={`slds-chat-message__text ${inboundOrOutboundStyle2(
 															chatMessage.role
@@ -179,12 +155,13 @@ export default function ChatgptCmp({ onCancel }) {
 											</li>
 										))}
 									</ul>
+									<div id="list-bottom"></div>
 								</section>
 							</section>
 						</div>
 					</div>
 					<div className="slds-modal__footer">
-						<form onSubmit={getMessages} className="slds-form--stacked">
+						<form onSubmit={addQuestion} className="slds-form--stacked">
 							<div className="slds-form-element">
 								<div className="slds-form-element__control slds-input-has-icon slds-input-has-icon_left-right slds-input-has-icon_group-right">
 									<svg
