@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import "./chatgptCmp.css";
 
-export default function ChatgptCmp({ onCancel }) {
+export default function ChatgptCmp({ onCancel, gridData }) {
 	const [value, setValue] = useState("");
 	const [previousChats, setPreviousChats] = useState([
 		{ role: "system", content: "You are a helpful assistant." },
@@ -10,6 +10,10 @@ export default function ChatgptCmp({ onCancel }) {
 	const [error, setError] = useState(null);
 
 	const listBottom = document.querySelector("#list-bottom");
+
+	useEffect(() => {
+		console.log(gridData);
+	}, []);
 
 	useEffect(() => {
 		if (value !== "") {
@@ -38,8 +42,8 @@ export default function ChatgptCmp({ onCancel }) {
 			},
 		};
 		try {
-			// const response = await fetch("http://localhost:3000/completions", options);
-			const response = await fetch("https://open-grid-sf.herokuapp.com/completions", options);
+			const response = await fetch("http://localhost:3000/completions", options);
+			// const response = await fetch("https://open-grid-sf.herokuapp.com/completions", options);
 			const data = await response.json();
 			if (data.error) {
 				console.log(data.error.code);
@@ -161,21 +165,16 @@ export default function ChatgptCmp({ onCancel }) {
 						</div>
 					</div>
 					<div className="slds-modal__footer">
-						<form onSubmit={addQuestion} className="slds-form--stacked">
-							<div className="slds-form-element">
-								<div className="slds-form-element__control slds-input-has-icon slds-input-has-icon_left-right slds-input-has-icon_group-right">
-									<svg
-										className="slds-icon slds-input__icon slds-input__icon_left slds-icon-text-default"
-										aria-hidden="true">
-										<use xlinkHref="/assets/icons/utility-sprite/svg/symbols.svg#questions_and_answers"></use>
-									</svg>
-									<input
-										className="slds-input"
+						<form onSubmit={addQuestion} className="slds-form form-container">
+							<div className="slds-form-element expand-fill">
+								<div className="slds-form-element__control slds-input-has-icon slds-input-has-icon_left slds-input-has-icon_group-right">
+									<textarea
 										value={value}
+										rows="2"
 										onChange={(e) => setValue(e.target.value)}
-									/>
-									<div className="slds-input__icon-group slds-input__icon-group_right">
-										{loading && (
+										class="slds-textarea"></textarea>
+									{loading && (
+										<div className="loading-centered">
 											<div
 												role="status"
 												className="slds-spinner slds-spinner_brand slds-spinner_x-small slds-input__spinner">
@@ -183,20 +182,20 @@ export default function ChatgptCmp({ onCancel }) {
 												<div className="slds-spinner__dot-a"></div>
 												<div className="slds-spinner__dot-b"></div>
 											</div>
-										)}
-										<button
-											className="slds-button slds-button_icon slds-input__icon slds-input__icon_right"
-											type="submit"
-											title="Submit">
-											<svg
-												className="slds-button__icon slds-icon-text-light"
-												aria-hidden="true">
-												<use xlinkHref="/assets/icons/utility-sprite/svg/symbols.svg#new"></use>
-											</svg>
-											<span className="slds-assistive-text">submit</span>
-										</button>
-									</div>
+										</div>
+									)}
 								</div>
+							</div>
+							<div className="button-container">
+								<button
+									className="slds-button slds-button_icon-brand slds-button_icon"
+									type="submit"
+									title="Submit">
+									<svg className="slds-button__icon" aria-hidden="true">
+										<use xlinkHref="/assets/icons/utility-sprite/svg/symbols.svg#new"></use>
+									</svg>
+									<span className="slds-assistive-text">submit</span>
+								</button>
 							</div>
 						</form>
 					</div>

@@ -22,6 +22,7 @@ export default function Tools({
 	onHighlightChanged,
 	onBulkEditSaved,
 	selectedRows,
+	gridData,
 }) {
 	const [sourceObj, setSourceObj] = useState();
 	const [objectFields, setObjectFields] = useState([]);
@@ -247,7 +248,9 @@ export default function Tools({
 					selectedRows={selectedRows}></BulkEditCmp>
 			)}
 			{chatgptModalVisible && (
-				<ChatgptCmp onCancel={() => setChatgptModalVisible(false)}></ChatgptCmp>
+				<ChatgptCmp
+					gridData={gridData}
+					onCancel={() => setChatgptModalVisible(false)}></ChatgptCmp>
 			)}
 		</section>
 	);

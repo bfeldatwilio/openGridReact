@@ -289,6 +289,7 @@ export default function Grid() {
 						selectedRows={selectedRows}
 						onBulkEditSaved={bulkEditSaveHandler}
 						onFilterChanged={(filters) => setActiveFilters(filters)}
+						gridData={gridData}
 						sr={sr}
 					/>
 				)}

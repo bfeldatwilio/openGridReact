@@ -42,6 +42,29 @@ app.post("/completions", async (req, res) => {
 	}
 });
 
+app.post("/embeddings", async (req, res) => {
+	const options = {
+		method: "POST",
+		headers: {
+			Authorization: `Bearer ${API_KEY}`,
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify({
+			model: "gpt-3.5-turbo",
+			input: JSON.stringify(req.body.gridData),
+			max_tokens: 100,
+			user: "open-grid-app",
+		}),
+	};
+	try {
+		const response = await fetch("https://api.openai.com/v1/embeddings", options);
+		const data = await response.json();
+		res.send(data);
+	} catch (error) {
+		console.error(error);
+	}
+});
+
 app.listen(PORT, () => {
 	console.log(`Server listening on ${PORT}`);
 });
