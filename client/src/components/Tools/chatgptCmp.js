@@ -3,15 +3,28 @@ import "./chatgptCmp.css";
 
 export default function ChatgptCmp({ onCancel, gridData }) {
 	const [value, setValue] = useState("");
+	const [docId, setDocId] = useState(null);
+	const [calledSummary, setCalledSummary] = useState(false);
 	const [previousChats, setPreviousChats] = useState([
-		{ role: "system", content: "You are a helpful assistant." },
+		{
+			role: "system",
+			content: JSON.stringify(gridData),
+		},
+		{
+			role: "system",
+			content:
+				"You are helpful assistant bot who takes this data to answer questions and provides human readable sentences as answers.  Provide answers only as they pertain to the business with Twilio.",
+		},
 	]);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
 
 	const listBottom = document.querySelector("#list-bottom");
+	// const DOMAIN = "http://localhost:3000";
+	const DOMAIN = "https://open-grid-sf.herokuapp.com";
 
 	useEffect(() => {
+		// getReadableData(gridData);
 		console.log(gridData);
 	}, []);
 
@@ -30,8 +43,39 @@ export default function ChatgptCmp({ onCancel, gridData }) {
 		scrollToBottom();
 	};
 
+	const getReadableData = async (gridData) => {
+		setLoading(true);
+		const options = {
+			method: "POST",
+			body: JSON.stringify({
+				input: gridData,
+			}),
+			headers: {
+				"Content-Type": "application/json",
+			},
+		};
+		try {
+			const response = await fetch(`${DOMAIN}/readabledata`, options);
+			const data = await response.json();
+			if (data.error) {
+				console.log(data.error.code);
+				setError(data.error.code);
+			} else {
+				console.log(data);
+				setDocId(data.docId);
+				// const newMessage = { role: "assistant", content: data };
+				// setPreviousChats([...previousChats, newMessage]);
+				// setCalledSummary(true);
+			}
+		} catch (e) {
+			console.error(e);
+		} finally {
+			setLoading(false);
+			scrollToBottom();
+		}
+	};
+
 	const getMessages = async () => {
-		console.log(previousChats);
 		const options = {
 			method: "POST",
 			body: JSON.stringify({
@@ -42,14 +86,15 @@ export default function ChatgptCmp({ onCancel, gridData }) {
 			},
 		};
 		try {
-			// const response = await fetch("http://localhost:3000/completions", options);
-			const response = await fetch("https://open-grid-sf.herokuapp.com/completions", options);
+			const response = await fetch(`${DOMAIN}/completions`, options);
 			const data = await response.json();
 			if (data.error) {
 				console.log(data.error.code);
 				setError(data.error.code);
 			} else {
-				setPreviousChats([...previousChats, data.choices[0].message]);
+				console.log(data);
+				const newMessage = { role: "assistant", content: data.data.content };
+				setPreviousChats([...previousChats, newMessage]);
 			}
 		} catch (e) {
 			console.error(e);
