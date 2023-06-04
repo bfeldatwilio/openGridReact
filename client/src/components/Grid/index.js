@@ -7,7 +7,7 @@ import "./grid.css";
 import Toast from "./toast";
 
 const PREFIX = "opengrid_";
-const GRIDCOUNT = "25";
+const GRIDCOUNT = 25;
 
 export default function Grid() {
 	const [sr, setSr] = useState();

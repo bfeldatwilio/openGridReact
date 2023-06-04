@@ -3,19 +3,7 @@ import "./chatgptCmp.css";
 
 export default function ChatgptCmp({ onCancel, gridData }) {
 	const [value, setValue] = useState("");
-	const [docId, setDocId] = useState(null);
-	const [calledSummary, setCalledSummary] = useState(false);
-	const [previousChats, setPreviousChats] = useState([
-		{
-			role: "system",
-			content: JSON.stringify(gridData),
-		},
-		{
-			role: "system",
-			content:
-				"You are helpful assistant bot who takes this data to answer questions and provides human readable sentences as answers.  Provide answers only as they pertain to the business with Twilio.",
-		},
-	]);
+	const [previousChats, setPreviousChats] = useState([]);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
 
@@ -24,8 +12,28 @@ export default function ChatgptCmp({ onCancel, gridData }) {
 	const DOMAIN = "https://open-grid-sf.herokuapp.com";
 
 	useEffect(() => {
-		// getReadableData(gridData);
-		console.log(gridData);
+		// const dataChunks = chunk(gridData, 10);
+		// let primerChats = dataChunks.map((dataChunk) => {
+		// 	return {
+		// 		role: "system",
+		// 		content: JSON.stringify(dataChunk),
+		// 	};
+		// });
+		let promptMsg = [
+			{
+				role: "system",
+				content: JSON.stringify(gridData),
+			},
+			{
+				role: "system",
+				content: `You are a helpful assistant bot for twilio a sales representative.  You take 
+				this data to answer questions and provides human 
+				readable sentences as answers.  
+				Provide answers only as they pertain 
+				to the business with Twilio.`,
+			},
+		];
+		setPreviousChats(promptMsg);
 	}, []);
 
 	useEffect(() => {
@@ -43,37 +51,34 @@ export default function ChatgptCmp({ onCancel, gridData }) {
 		scrollToBottom();
 	};
 
-	const getReadableData = async (gridData) => {
-		setLoading(true);
-		const options = {
-			method: "POST",
-			body: JSON.stringify({
-				input: gridData,
-			}),
-			headers: {
-				"Content-Type": "application/json",
-			},
-		};
-		try {
-			const response = await fetch(`${DOMAIN}/readabledata`, options);
-			const data = await response.json();
-			if (data.error) {
-				console.log(data.error.code);
-				setError(data.error.code);
-			} else {
-				console.log(data);
-				setDocId(data.docId);
-				// const newMessage = { role: "assistant", content: data };
-				// setPreviousChats([...previousChats, newMessage]);
-				// setCalledSummary(true);
-			}
-		} catch (e) {
-			console.error(e);
-		} finally {
-			setLoading(false);
-			scrollToBottom();
-		}
-	};
+	// const getReadableData = async (gridData) => {
+	// 	setLoading(true);
+	// 	const options = {
+	// 		method: "POST",
+	// 		body: JSON.stringify({
+	// 			input: gridData,
+	// 		}),
+	// 		headers: {
+	// 			"Content-Type": "application/json",
+	// 		},
+	// 	};
+	// 	try {
+	// 		const response = await fetch(`${DOMAIN}/readabledata`, options);
+	// 		const data = await response.json();
+	// 		if (data.error) {
+	// 			console.log(data.error.code);
+	// 			setError(data.error.code);
+	// 		} else {
+	// 			console.log(data);
+	// 			setDocId(data.docId);
+	// 		}
+	// 	} catch (e) {
+	// 		console.error(e);
+	// 	} finally {
+	// 		setLoading(false);
+	// 		scrollToBottom();
+	// 	}
+	// };
 
 	const getMessages = async () => {
 		const options = {
@@ -118,6 +123,17 @@ export default function ChatgptCmp({ onCancel, gridData }) {
 		setTimeout(() => {
 			listBottom.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
 		}, 0);
+	};
+
+	const chunk = (items, size) => {
+		const chunks = [];
+		items = [].concat(...items);
+
+		while (items.length) {
+			chunks.push(items.splice(0, size));
+		}
+
+		return chunks;
 	};
 
 	const nonSystemMessages = previousChats.filter((message) => message.role !== "system");
@@ -235,6 +251,7 @@ export default function ChatgptCmp({ onCancel, gridData }) {
 								<button
 									className="slds-button slds-button_icon-brand slds-button_icon"
 									type="submit"
+									disabled={!value}
 									title="Submit">
 									<svg className="slds-button__icon" aria-hidden="true">
 										<use xlinkHref="/assets/icons/utility-sprite/svg/symbols.svg#new"></use>
