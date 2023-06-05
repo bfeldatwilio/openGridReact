@@ -136,6 +136,10 @@ export default function ChatgptCmp({ onCancel, gridData }) {
 		return chunks;
 	};
 
+	const copyText = (chatMessage) => {
+		navigator.clipboard.writeText(chatMessage);
+	};
+
 	const nonSystemMessages = previousChats.filter((message) => message.role !== "system");
 
 	return (
@@ -214,6 +218,28 @@ export default function ChatgptCmp({ onCancel, gridData }) {
 														className={`slds-chat-message__text ${inboundOrOutboundStyle2(
 															chatMessage.role
 														)}`}>
+														{chatMessage.role !== "user" && (
+															<div className="copy-container">
+																<button
+																	title="copy to clipboard"
+																	onClick={() =>
+																		copyText(
+																			chatMessage.content
+																		)
+																	}
+																	className="slds-button slds-button_icon"
+																	title="Settings">
+																	<svg
+																		className="slds-button__icon"
+																		ariaHidden="true">
+																		<use xlinkHref="/assets/icons/utility-sprite/svg/symbols.svg#copy"></use>
+																	</svg>
+																	<span className="slds-assistive-text">
+																		Settings
+																	</span>
+																</button>
+															</div>
+														)}
 														{chatMessage.content}
 													</div>
 												</div>

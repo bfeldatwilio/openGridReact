@@ -15,6 +15,10 @@ ul.slds-chat-list {
 	padding-bottom: 15px;
 }
 
+div.slds-chat-message__body {
+	position: relative;
+}
+
 .loader-centered {
 	position: absolute;
 	width: 100%;
@@ -38,4 +42,13 @@ ul.slds-chat-list {
 	padding: 0 5px;
 	justify-content: center;
 	align-items: center;
+}
+
+.copy-container {
+	position: absolute;
+	top: -14px;
+	right: -14px;
+	padding: 7px;
+	border-radius: 50%;
+	background: #f3f3f3;
 }
