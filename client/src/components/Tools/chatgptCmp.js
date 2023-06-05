@@ -221,14 +221,13 @@ export default function ChatgptCmp({ onCancel, gridData }) {
 														{chatMessage.role !== "user" && (
 															<div className="copy-container">
 																<button
-																	title="copy to clipboard"
 																	onClick={() =>
 																		copyText(
 																			chatMessage.content
 																		)
 																	}
 																	className="slds-button slds-button_icon"
-																	title="Settings">
+																	title="Copy">
 																	<svg
 																		className="slds-button__icon"
 																		ariaHidden="true">
