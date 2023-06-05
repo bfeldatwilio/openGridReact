@@ -8,8 +8,8 @@ export default function ChatgptCmp({ onCancel, gridData }) {
 	const [error, setError] = useState(null);
 
 	const listBottom = document.querySelector("#list-bottom");
-	// const DOMAIN = "http://localhost:3000";
-	const DOMAIN = "https://open-grid-sf.herokuapp.com";
+	const DOMAIN = "http://localhost:3000";
+	// const DOMAIN = "https://open-grid-sf.herokuapp.com";
 
 	useEffect(() => {
 		// const dataChunks = chunk(gridData, 10);
@@ -48,7 +48,9 @@ export default function ChatgptCmp({ onCancel, gridData }) {
 		setLoading(true);
 		const newMessage = { role: "user", content: value };
 		setPreviousChats([...previousChats, newMessage]);
-		scrollToBottom();
+		setTimeout(() => {
+			scrollToBottom();
+		}, 0);
 	};
 
 	// const getReadableData = async (gridData) => {
