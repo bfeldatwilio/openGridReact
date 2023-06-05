@@ -104,6 +104,7 @@ export default function ChatgptCmp({ onCancel, gridData }) {
 				setPreviousChats([...previousChats, newMessage]);
 			}
 		} catch (e) {
+			setError(e);
 			console.error(e);
 		} finally {
 			setLoading(false);
