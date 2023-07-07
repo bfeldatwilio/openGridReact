@@ -28,7 +28,7 @@ export default function ChatgptCmp({ onCancel, gridData }) {
 				role: "system",
 				content: `You are a helpful assistant bot for twilio a sales representative.  You take 
 				this data to answer questions and provides human 
-				readable sentences as answers.  
+				readable sentences and paragraphs as answers.  
 				Provide answers only as they pertain 
 				to the business with Twilio.`,
 			},
