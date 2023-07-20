@@ -32,7 +32,6 @@ const graphQLPOST = async (sr, graph) => {
 			success: function (data) {
 				if (data.status === 200) {
 					resolve(data.payload);
-					console.log(data.payload);
 				} else {
 					console.log("Not 200@!#$%@!#$%!#$%");
 					console.log(data);

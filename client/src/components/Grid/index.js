@@ -51,6 +51,7 @@ export default function Grid() {
 		let graphStr = graphStringFromObjects(object, fields, filters);
 		let gridData = await graphqlQuery(sr, graphStr, object.QualifiedApiName);
 		let formedData = formData(gridData);
+		console.log(formData);
 		setGridData(formedData);
 		setLoading(false);
 	};
